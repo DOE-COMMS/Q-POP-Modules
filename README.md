@@ -6,20 +6,21 @@ The main modules of Q-POP. We plan to gradually open source three main modules i
 FEniCS C++ package must be installed.
 
 ## Folder structure
-- core
-- external
-|- pugixml
- |- pugiconfig.hpp
- |- pugixml.cpp
- |- pugixml.hpp
-- imt
-|- imt-cpp
- |- main.cpp
- |- input.h
- |- VO2_2tdevice.cpp
- |- VO2_2tdevice.hpp
- |- VO2_2tdevice.ufl
-|- imt-py
- |- VO2_2tdevice.py
+```sh
+├── core
+├── external
+│   └── pugixml
+│       ├── pugiconfig.hpp
+│       ├── pugixml.cpp
+│       └── pugixml.hpp
+└── imt
+    ├── imt-cpp
+    │   ├── input.h
+    │   ├── main.cpp
+    │   └── VO2_2tdevice.ufl
+    └── imt-py
+        ├── VO2_GSBlockATP.py
+        └── VO2_Nit_EfficAdap_v4.py
+```
 
 ## How to build the program
