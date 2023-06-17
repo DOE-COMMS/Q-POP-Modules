@@ -25,5 +25,8 @@ FEniCS C++ package must be installed.
 
 ## How to build the program
 The program uses cmake to build the executable. Simply create a build directory in the root directory of the package, and go to that build directory, and then enter in the command line: 
+
+```
 cmake ..
 make
+```
