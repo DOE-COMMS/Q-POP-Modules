@@ -36,7 +36,7 @@ cd boost_1_71_0/
 ```sh
 sudo apt install git libeigen3-dev python3-pip cmake 
 pip3 install fenics-ffc --upgrade
-
+echo 'export PATH=$PATH:$HOME/.local/bin' >> ~/.bashrc
 git clone --branch=2019.1.0.post0 https://bitbucket.org/fenics-project/dolfin.git
 cd dolfin
 git describe --tags --abbrev=0
