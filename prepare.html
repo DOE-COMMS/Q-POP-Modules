@@ -409,7 +409,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-fenics-c-version">Install FEniCS C++ version</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gnu-9">GNU 9</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boost-1-71">Boost 1.71</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#others">Others</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dolfin">Install Dolfin</a></li>
 </ul>
 </li>
 </ul>
@@ -458,8 +458,8 @@ tar<span class="w"> </span>-xzf<span class="w"> </span>boost_1_71_0.tar.gz
 </pre></div>
 </div>
 </section>
-<section id="others">
-<h3>Others<a class="headerlink" href="#others" title="Permalink to this heading">#</a></h3>
+<section id="install-dolfin">
+<h3>Install Dolfin<a class="headerlink" href="#install-dolfin" title="Permalink to this heading">#</a></h3>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>git<span class="w"> </span>libeigen3-dev<span class="w"> </span>python3-pip<span class="w"> </span>cmake<span class="w"> </span>
 pip3<span class="w"> </span>install<span class="w"> </span>fenics-ffc<span class="w"> </span>--upgrade
 <span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export PATH=$PATH:$HOME/.local/bin&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
@@ -472,9 +472,6 @@ cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span
 make
 make<span class="w"> </span>install
 <span class="nb">cd</span><span class="w"> </span>../..
-
-git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="o">=</span><span class="m">2019</span>.1.0.post0<span class="w"> </span>https://bitbucket.org/fenics-project/mshr
-<span class="nb">cd</span><span class="w"> </span>mshr
 </pre></div>
 </div>
 </section>
@@ -532,7 +529,7 @@ git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="o">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-fenics-c-version">Install FEniCS C++ version</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gnu-9">GNU 9</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boost-1-71">Boost 1.71</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#others">Others</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dolfin">Install Dolfin</a></li>
 </ul>
 </li>
 </ul>

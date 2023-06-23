@@ -32,7 +32,7 @@ cd boost_1_71_0/
 ./b2 install
 ```
 
-### Others
+### Install Dolfin
 ```sh
 sudo apt install git libeigen3-dev python3-pip cmake 
 pip3 install fenics-ffc --upgrade
@@ -46,8 +46,4 @@ cmake -DCMAKE_INSTALL_PREFIX=$HOME/fenics/dolfin -DBOOST_ROOT=$HOME/boost ..
 make
 make install
 cd ../..
-
-git clone --branch=2019.1.0.post0 https://bitbucket.org/fenics-project/mshr
-cd mshr
-
 ```
