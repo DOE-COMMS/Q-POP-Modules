@@ -11,13 +11,14 @@ target_link_libraries(qpop-imt ${DOLFIN_LIBRARIES} Boost::timer Boost::boost)
 
 add_custom_target(
   compile_ufl ALL
-  DEPENDS VO2_2tdevice.h
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/VO2_2tdevice.h
   COMMENT "Compile VO2_2tdevice.ufl file")
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/VO2_2tdevice.h
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/VO2_2tdevice.ufl
-  COMMAND "ffc -l dolfin VO2_2tdevice.ufl"
-  COMMENT "Create VO2_2tdevice.h by, ffc -l dolfin VO2_2tdevice.ufl")
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  COMMAND ffc -l dolfin VO2_2tdevice.ufl
+  COMMENT "Create VO2_2tdevice.h by, ffc -l dolfin ${CMAKE_CURRENT_SOURCE_DIR}/VO2_2tdevice.ufl")
 
 add_dependencies(qpop-imt compile_ufl)
