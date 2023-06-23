@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>&lt;no title&gt; &#8212; Q-POP</title>
+    <title>Build and run &#8212; Q-POP</title>
   
   
   
@@ -51,6 +51,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'run';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Environment setup" href="prepare.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -174,8 +175,9 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="prepare.html">Environment setup</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Build and run</a></li>
 </ul>
 
     </div>
@@ -393,7 +395,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1><no title></h1>
+    <h1>Build and run</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -402,9 +404,9 @@ document.write(`
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="simple visible nav section-nav flex-column">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build">Build</a></li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -415,7 +417,17 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  
+  <section class="tex2jax_ignore mathjax_ignore" id="build-and-run">
+<h1>Build and run<a class="headerlink" href="#build-and-run" title="Permalink to this heading">#</a></h1>
+<section id="build">
+<h2>Build<a class="headerlink" href="#build" title="Permalink to this heading">#</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DDOLFIN_DIR<span class="o">=</span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/cmake<span class="w"> </span>-DBOOST_ROOT<span class="o">=</span><span class="nv">$HOME</span>/boost<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
+cmake<span class="w"> </span>--build<span class="w"> </span>build
+</pre></div>
+</div>
+</section>
+</section>
+
 
                 </article>
               
@@ -428,6 +440,15 @@ document.write(`
   
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="prepare.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Environment setup</p>
+      </div>
+    </a>
 </div></div>
   
 </div>
@@ -445,9 +466,9 @@ document.write(`
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav class="bd-toc-nav page-toc">
-    <ul class="simple visible nav section-nav flex-column">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build">Build</a></li>
 </ul>
-
   </nav></div>
 
 </div></div>

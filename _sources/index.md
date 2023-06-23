@@ -3,9 +3,9 @@ sd_hide_title: true
 title: Manual
 ---
 
-
-# Manual 
+# Manual
 
 ```{toctree}
 prepare.md
+run.md
 ```
