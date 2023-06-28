@@ -32,7 +32,7 @@ make
 ```
 
 ## Input file
-The input file is written in xml form. Below is an example of the input file.
+The program is currently solving for a rectangular VO2 device, supplied with a direct voltage through a series resistor. The input file is written in xml form. Below is an example of the input file.
 ```
 <?xml version="1.0"?>
 <input>
@@ -70,4 +70,14 @@ The input file is written in xml form. Below is an example of the input file.
  </solverparameters>
 </input>
 ```
-Almost all the parameters are self-explanatory. The program is currently solving for a rectangular VO2 device, supplied with a direct voltage through a series resistor. The ```external``` section defines external parameters.
+Almost all the parameters are self-explanatory. The `external` section defines external parameters: 
+Name          | Explanation
+------------- | -------------------
+`temperature` | Ambient temperature
+`voltage`     | Direct voltage applied
+`resistor`    | Resistance of the series resistor
+`capacitor`   | The capacitance representing the parasitic capacitance or the external capacitor parallelly connected with the series resistor
+`heatdiss`    | Heat transfer coefficient from the device to the environment
+`Lx`          | Width of the device
+`Ly`          | Length of the device, along the electric field
+`Lz`          | Thickness of the device
