@@ -81,3 +81,25 @@ Name          | Explanation
 `Lx`          | Width of the device
 `Ly`          | Length of the device, along the electric field
 `Lz`          | Thickness of the device
+The `time` section defines the parameters related to the time:
+Name         | Explanation
+------------ | -----------
+`endtime`    | Simulation end time; beginning time is zero
+`savemethod` | Method of saving time-dependent solutions, used with `saveperiod` parameter. `auto` means to save every `saveperiod`-step solution; `fixed` means to save every `saveperiod`-nanosecond solution
+`saveperiod` | See `savemethod`
+The `initialization` section defines parameters for initialization:
+Name          | Explanation
+------------- | -----------
+`temperature` | Initial temperature of the device
+`SOP`         | Initial value for the structural order parameter
+`EOP`         | Initial value for the electronic order parameter
+`Tcvariance`  | `method`: how to set up a nucleus of the high-temperature phase. `nucleus1` means to set up a semicircle with a radius of `radius` and transition temperature shift of `Tcshift`, located at the midpoint of the y = 0 edge
+The `solverparameters` section defines the parameters for both the Newton's iteration solver (for nonlinear differential equations) and the linear solver (for solving linear equations in each iteration of the Newton's method):
+Name                      | Explanation
+------------------------- | -----------
+`Newtonabsolutetolerance` | Absolute tolerance for the Newton iteration
+`Newtonrelativetolerance` | Relative tolerance for the Newton iteration. Meeting either the absolute tolerance or the relative tolerance is considered converged
+`Newtonmaxiteration`      | Limit of the iteration times for the Newton's method
+`timesteptolerance`       | Relative tolerance for the adaptive time stepping error
+`directsolver`            | Which direct solver to use for solving the linear problem
+`loglevel`                | Log level; see FEniCS manual for the log level
