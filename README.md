@@ -70,7 +70,7 @@ The program is currently solving for a rectangular VO2 device, supplied with a d
  </solverparameters>
 </input>
 ```
-Almost all the parameters are self-explanatory. The `external` section defines external parameters: 
+Almost all the parameters are self-explanatory. The units are fixed and just for reminding the user of what the unit of the corresponding parameter is. The `external` section defines external parameters: 
 Name          | Explanation
 ------------- | -------------------
 `temperature` | Ambient temperature
@@ -106,3 +106,18 @@ Name                      | Explanation
 `timesteptolerance`       | Relative tolerance for the adaptive time stepping error
 `directsolver`            | Which direct solver to use for solving the linear problem
 `loglevel`                | Log level; see [FEniCS manual](https://fenics.readthedocs.io/projects/dolfin/en/2017.2.0/apis/api_log.html "FEniCS log level")
+
+## Visualization of solutions
+The program generates solutions in pvd format that can be read and plot by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:
+Name     | Explanation
+-------- | -----------
+eta.pvd  | Time-dependent structural order parameter field
+psi.pvd  | Time-dependent electronic order parameter field
+phi.pvd  | Time-dependent electric potential
+T.pvd    | Time-dependent temperature field
+n.pvd    | Time-dependent electron density field
+p.pvd    | Time-dependent hole density field
+niov.pvd | Time-dependent ionized oxygen vacancy concentration field
+nnov.pvd | Time-dependent neutral oxygen vacancy concentration field
+
+Each solution file listed above links to data at different moments. The data at a moment in turn links to data parallelly computed on distributed processors. The user can just use ParaView to read the .pvd files and then follow the guide of [ParaView](https://docs.paraview.org/en/latest/UsersGuide/index.html "ParaView user's guide") to plot spatiotemporal fields.
