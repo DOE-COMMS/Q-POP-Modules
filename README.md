@@ -95,7 +95,7 @@ Name          | Explanation
 `temperature` | Initial temperature of the device
 `SOP`         | Initial value for the structural order parameter
 `EOP`         | Initial value for the electronic order parameter
-`Tcvariance`  | `method`: how to set up a nucleus of the high-temperature phase. `nucleus1` means to set up a semicircle with a radius of `radius` and transition temperature shift of `Tcshift`, located at the midpoint of the y = 0 edge
+`Tcvariance`  | `method`: how to set up a nucleus of the high-temperature phase. `nucleus1` means to set up a semicircle with a radius of `radius` and a transition temperature shift of `Tcshift`, located at the midpoint of the $y = 0$ edge
 
 The `solverparameters` section defines the parameters for both the Newton's iteration solver (for nonlinear differential equations) and the linear solver (for solving linear equations in each iteration of the Newton's method):
 Name                      | Explanation
