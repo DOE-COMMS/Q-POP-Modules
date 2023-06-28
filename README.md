@@ -3,7 +3,7 @@
 The main modules of Q-POP. We plan to gradually open source three main modules in the next few years (this year is 2023). This is still an ongoing effort, and the first one to be released is the insulator-metal transition module, while superconductor module and the dynamic phase-field module coming later.
 
 ## Setup development environment
-FEniCS C++ package must be installed.
+This program uses FEniCS C++ library for defining and solving finite-element partial differential equations. FEniCS C++ library of version 2019.1.0.post0 must be installed.
 
 ## Folder structure
 ```sh
@@ -105,4 +105,4 @@ Name                      | Explanation
 `Newtonmaxiteration`      | Limit of the iteration times for the Newton's method
 `timesteptolerance`       | Relative tolerance for the adaptive time stepping error
 `directsolver`            | Which direct solver to use for solving the linear problem
-`loglevel`                | Log level; see FEniCS manual for the log level
+`loglevel`                | Log level; see [FEniCS manual](https://fenics.readthedocs.io/projects/dolfin/en/2017.2.0/apis/api_log.html "FEniCS log level")
