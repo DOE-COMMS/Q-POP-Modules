@@ -1,5 +1,9 @@
 # Environment setup
 
+:::{caution}
+We recommend using Ubuntu 20.04.
+:::
+
 ## Install FEniCS C++ version
 
 ### GNU 9
@@ -23,7 +27,7 @@ dolfin/io/VTKWriter.cpp:27:10: fatal error: boost/detail/endian.hpp: No such fil
 compilation terminated.
 ```
 
-We found boost 1.71 works fine with FEniCS 2019. If you are using Ubuntu 20.04, then you can `sudo apt install libboost-all-dev` to install boost 1.71. If you are on newer version of Ubuntu, then you will have to build boost from source.
+We found boost 1.71 works fine with FEniCS 2019. If you are using Ubuntu 20.04, then you can `sudo apt install libboost-dev` to install boost 1.71. If you are on newer version of Ubuntu, then you will have to build boost from source.
 ```sh
 wget https://boostorg.jfrog.io/artifactory/main/release/1.71.0/source/boost_1_71_0.tar.gz
 tar -xzf boost_1_71_0.tar.gz
@@ -42,8 +46,30 @@ cd dolfin
 git describe --tags --abbrev=0
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=$HOME/fenics/dolfin -DBOOST_ROOT=$HOME/boost ..
+```
+If you are using Ubuntu 20.04, use `cmake -DCMAKE_INSTALL_PREFIX=$HOME/fenics/dolfin ..`, while if you are using Ubuntu 22.04 `cmake -DCMAKE_INSTALL_PREFIX=$HOME/fenics/dolfin -DBOOST_ROOT=$HOME/boost ..`
+
+```sh
 make
 make install
 cd ../..
+echo "source /home/xcheng/fenics/dolfin/share/dolfin/dolfin.conf" >> ~/.bashrc
+```
+
+You need to close and reopen the terminal to make update the environment variables.
+
+## Install sphinx 
+
+:::{attention}
+only needed if you want to build the documentation locally
+:::
+
+```sh
+pip install Sphinx==6.2.1
+pip install myst-parser sphinxcontrib-bibtex sphinx_design sphinx_copybutton sphinxcontrib-mermaid sphinx_multiversion sphinx-book-theme
+```
+
+```sh
+cd docs
+make html
 ```

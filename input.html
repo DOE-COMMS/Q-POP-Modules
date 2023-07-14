@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Environment setup &#8212; Q-POP</title>
+    <title>Input &#8212; Q-POP</title>
   
   
   
@@ -46,13 +46,15 @@
     <script src="_static/copybutton.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script src="_static/design-tabs.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'prepare';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'input';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Build and run" href="run.html" />
-    <link rel="prev" title="Manual" href="index.html" />
+    <link rel="next" title="Visualization" href="visualization.html" />
+    <link rel="prev" title="Build and run" href="run.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -177,9 +179,9 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Environment setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prepare.html">Environment setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">Build and run</a></li>
-<li class="toctree-l1"><a class="reference internal" href="input.html">Input</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Input</a></li>
 <li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
 </ul>
 
@@ -252,7 +254,7 @@
       
       
       
-      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/blob/main/docs/prepare.md?plain=1" target="_blank"
+      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/blob/main/docs/input.md?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -269,7 +271,7 @@
       
       
       
-      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/edit/main/docs/prepare.md" target="_blank"
+      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/edit/main/docs/input.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -286,7 +288,7 @@
       
       
       
-      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/issues/new?title=Issue%20on%20page%20%2Fprepare.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/issues/new?title=Issue%20on%20page%20%2Finput.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -316,7 +318,7 @@
       
       
       
-      <li><a href="_sources/prepare.md" target="_blank"
+      <li><a href="_sources/input.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -398,7 +400,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Environment setup</h1>
+    <h1>Input</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -408,13 +410,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-fenics-c-version">Install FEniCS C++ version</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gnu-9">GNU 9</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boost-1-71">Boost 1.71</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dolfin">Install Dolfin</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-sphinx">Install sphinx</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input-file">Input file</a></li>
 </ul>
             </nav>
         </div>
@@ -426,81 +422,151 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="environment-setup">
-<h1>Environment setup<a class="headerlink" href="#environment-setup" title="Permalink to this heading">#</a></h1>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>We recommend using Ubuntu 20.04.</p>
-</div>
-<section id="install-fenics-c-version">
-<h2>Install FEniCS C++ version<a class="headerlink" href="#install-fenics-c-version" title="Permalink to this heading">#</a></h2>
-<section id="gnu-9">
-<h3>GNU 9<a class="headerlink" href="#gnu-9" title="Permalink to this heading">#</a></h3>
-<p>It is necessary to use gnu compiler v9, if you are on system that defaults to another version of gnu compiler, then you need to switch to gnu-9</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>gcc-9<span class="w"> </span>g++-9<span class="w"> </span>gfortran-9
-sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--install<span class="w"> </span>/usr/bin/gcc<span class="w"> </span>gcc<span class="w"> </span>/usr/bin/gcc-9<span class="w"> </span><span class="m">90</span><span class="w"> </span>--slave<span class="w"> </span>/usr/bin/gcov<span class="w"> </span>gcov<span class="w"> </span>/usr/bin/gcov-9
-sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--install<span class="w"> </span>/usr/bin/g++<span class="w"> </span>g++<span class="w"> </span>/usr/bin/g++-9<span class="w"> </span><span class="m">90</span>
-sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--install<span class="w"> </span>/usr/bin/gfortran<span class="w"> </span>gfortran<span class="w"> </span>/usr/bin/gfortran-9<span class="w"> </span><span class="m">90</span>
-sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<span class="w"> </span>gcc
-sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<span class="w"> </span>g++
-sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<span class="w"> </span>gfortran
+  <section class="tex2jax_ignore mathjax_ignore" id="input">
+<h1>Input<a class="headerlink" href="#input" title="Permalink to this heading">#</a></h1>
+<section id="input-file">
+<h2>Input file<a class="headerlink" href="#input-file" title="Permalink to this heading">#</a></h2>
+<p>The program is currently solving for a rectangular VO2 device, supplied with a direct voltage through a series resistor. The input file is written in xml form. Below is an example of the input file.</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="nt">&lt;input&gt;</span>
+<span class="w"> </span><span class="nt">&lt;external&gt;</span>
+<span class="w">  </span><span class="nt">&lt;temperature</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;K&#39;</span><span class="nt">&gt;</span>300.1<span class="nt">&lt;/temperature&gt;</span>
+<span class="w">  </span><span class="nt">&lt;voltage</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;V&#39;</span><span class="nt">&gt;</span>5.6<span class="nt">&lt;/voltage&gt;</span>
+<span class="w">  </span><span class="nt">&lt;resistor</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;Ohm&#39;</span><span class="nt">&gt;</span>2.5e5<span class="nt">&lt;/resistor&gt;</span>
+<span class="w">  </span><span class="nt">&lt;capacitor</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;nF&#39;</span><span class="nt">&gt;</span>0.0<span class="nt">&lt;/capacitor&gt;</span>
+<span class="w">  </span><span class="nt">&lt;heatdiss</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;W/m^2K&#39;</span><span class="nt">&gt;</span>3e6<span class="nt">&lt;/heatdiss&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Lx</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;nm&#39;</span><span class="w"> </span><span class="na">mesh=</span><span class="s">&#39;100&#39;</span><span class="nt">&gt;</span>100.0<span class="nt">&lt;/Lx&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Ly</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;nm&#39;</span><span class="w"> </span><span class="na">mesh=</span><span class="s">&#39;40&#39;</span><span class="nt">&gt;</span>40.0<span class="nt">&lt;/Ly&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Lz</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;nm&#39;</span><span class="nt">&gt;</span>20.0<span class="nt">&lt;/Lz&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/external&gt;</span>
+<span class="w"> </span><span class="nt">&lt;time&gt;</span>
+<span class="w">  </span><span class="nt">&lt;endtime</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;ns&#39;</span><span class="nt">&gt;</span>2e3<span class="nt">&lt;/endtime&gt;</span>
+<span class="w">  </span><span class="nt">&lt;savemethod&gt;</span>auto<span class="nt">&lt;/savemethod&gt;</span>
+<span class="w">  </span><span class="nt">&lt;saveperiod&gt;</span>20<span class="nt">&lt;/saveperiod&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/time&gt;</span>
+<span class="w"> </span><span class="nt">&lt;initialization&gt;</span>
+<span class="w">  </span><span class="nt">&lt;temperature</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;K&#39;</span><span class="nt">&gt;</span>300.0<span class="nt">&lt;/temperature&gt;</span>
+<span class="w">  </span><span class="nt">&lt;SOP&gt;</span>1.119<span class="nt">&lt;/SOP&gt;</span>
+<span class="w">  </span><span class="nt">&lt;EOP&gt;</span>-1.293<span class="nt">&lt;/EOP&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Tcvariance</span><span class="w"> </span><span class="na">method=</span><span class="s">&#39;nucleus1&#39;</span><span class="nt">&gt;</span>
+<span class="w">   </span><span class="nt">&lt;Tcshift</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;K&#39;</span><span class="nt">&gt;</span>-5.0<span class="nt">&lt;/Tcshift&gt;</span>
+<span class="w">   </span><span class="nt">&lt;radius</span><span class="w"> </span><span class="na">unit=</span><span class="s">&#39;nm&#39;</span><span class="nt">&gt;</span>3.0<span class="nt">&lt;/radius&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/Tcvariance&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/initialization&gt;</span>
+<span class="w"> </span><span class="nt">&lt;solverparameters&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Newtonabsolutetolerance&gt;</span>1e-5<span class="nt">&lt;/Newtonabsolutetolerance&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Newtonrelativetolerance&gt;</span>1e-3<span class="nt">&lt;/Newtonrelativetolerance&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Newtonmaxiteration&gt;</span>15<span class="nt">&lt;/Newtonmaxiteration&gt;</span>
+<span class="w">  </span><span class="nt">&lt;timesteptolerance&gt;</span>1e-2<span class="nt">&lt;/timesteptolerance&gt;</span>
+<span class="w">  </span><span class="nt">&lt;directsolver&gt;</span>pastix<span class="nt">&lt;/directsolver&gt;</span>
+<span class="w">  </span><span class="nt">&lt;loglevel&gt;</span>INFO<span class="nt">&lt;/loglevel&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/solverparameters&gt;</span>
+<span class="nt">&lt;/input&gt;</span>
 </pre></div>
 </div>
-</section>
-<section id="boost-1-71">
-<h3>Boost 1.71<a class="headerlink" href="#boost-1-71" title="Permalink to this heading">#</a></h3>
-<p>In newer version of Boost, you will meet this error</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>dolfin/io/VTKWriter.cpp:27:10:<span class="w"> </span>fatal<span class="w"> </span>error:<span class="w"> </span>boost/detail/endian.hpp:<span class="w"> </span>No<span class="w"> </span>such<span class="w"> </span>file<span class="w"> </span>or<span class="w"> </span>directory
-<span class="w">   </span><span class="m">27</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="c1">#include &lt;boost/detail/endian.hpp&gt;</span>
-<span class="w">      </span><span class="p">|</span><span class="w">          </span>^~~~~~~~~~~~~~~~~~~~~~~~~
-compilation<span class="w"> </span>terminated.
-</pre></div>
-</div>
-<p>We found boost 1.71 works fine with FEniCS 2019. If you are using Ubuntu 20.04, then you can <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">libboost-dev</span></code> to install boost 1.71. If you are on newer version of Ubuntu, then you will have to build boost from source.</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://boostorg.jfrog.io/artifactory/main/release/1.71.0/source/boost_1_71_0.tar.gz
-tar<span class="w"> </span>-xzf<span class="w"> </span>boost_1_71_0.tar.gz
-<span class="nb">cd</span><span class="w"> </span>boost_1_71_0/
-./bootstrap.sh<span class="w"> </span>--prefix<span class="o">=</span><span class="nv">$HOME</span>/boost
-./b2<span class="w"> </span>install
-</pre></div>
-</div>
-</section>
-<section id="install-dolfin">
-<h3>Install Dolfin<a class="headerlink" href="#install-dolfin" title="Permalink to this heading">#</a></h3>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>git<span class="w"> </span>libeigen3-dev<span class="w"> </span>python3-pip<span class="w"> </span>cmake<span class="w"> </span>
-pip3<span class="w"> </span>install<span class="w"> </span>fenics-ffc<span class="w"> </span>--upgrade
-<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export PATH=$PATH:$HOME/.local/bin&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
-git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="o">=</span><span class="m">2019</span>.1.0.post0<span class="w"> </span>https://bitbucket.org/fenics-project/dolfin.git
-<span class="nb">cd</span><span class="w"> </span>dolfin
-git<span class="w"> </span>describe<span class="w"> </span>--tags<span class="w"> </span>--abbrev<span class="o">=</span><span class="m">0</span>
-mkdir<span class="w"> </span>build
-<span class="nb">cd</span><span class="w"> </span>build
-</pre></div>
-</div>
-<p>If you are using Ubuntu 20.04, use <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-DCMAKE_INSTALL_PREFIX=$HOME/fenics/dolfin</span> <span class="pre">..</span></code>, while if you are using Ubuntu 22.04 <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-DCMAKE_INSTALL_PREFIX=$HOME/fenics/dolfin</span> <span class="pre">-DBOOST_ROOT=$HOME/boost</span> <span class="pre">..</span></code></p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make
-make<span class="w"> </span>install
-<span class="nb">cd</span><span class="w"> </span>../..
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source /home/xcheng/fenics/dolfin/share/dolfin/dolfin.conf&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
-</pre></div>
-</div>
-<p>You need to close and reopen the terminal to make update the environment variables.</p>
-</section>
-</section>
-<section id="install-sphinx">
-<h2>Install sphinx<a class="headerlink" href="#install-sphinx" title="Permalink to this heading">#</a></h2>
-<div class="admonition attention">
-<p class="admonition-title">Attention</p>
-<p>only needed if you want to build the documentation locally</p>
-</div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">Sphinx</span><span class="o">==</span><span class="m">6</span>.2.1
-pip<span class="w"> </span>install<span class="w"> </span>myst-parser<span class="w"> </span>sphinxcontrib-bibtex<span class="w"> </span>sphinx_design<span class="w"> </span>sphinx_copybutton<span class="w"> </span>sphinxcontrib-mermaid<span class="w"> </span>sphinx_multiversion<span class="w"> </span>sphinx-book-theme
-</pre></div>
-</div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
-make<span class="w"> </span>html
-</pre></div>
-</div>
+<p>Almost all the parameters are self-explanatory. The units are fixed and just for reminding the user of what the unit of the corresponding parameter is. The <code class="docutils literal notranslate"><span class="pre">external</span></code> section defines external parameters:</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></td>
+<td><p>Ambient temperature</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p>Direct voltage applied</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">resistor</span></code></p></td>
+<td><p>Resistance of the series resistor</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">capacitor</span></code></p></td>
+<td><p>The capacitance representing the parasitic capacitance or the external capacitor parallelly connected with the series resistor</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">heatdiss</span></code></p></td>
+<td><p>Heat transfer coefficient from the device to the environment</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Lx</span></code></p></td>
+<td><p>Width of the device</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Ly</span></code></p></td>
+<td><p>Length of the device, along the electric field</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Lz</span></code></p></td>
+<td><p>Thickness of the device</p></td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal notranslate"><span class="pre">time</span></code> section defines the parameters related to the time:</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">endtime</span></code></p></td>
+<td><p>Simulation end time; beginning time is zero</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">savemethod</span></code></p></td>
+<td><p>Method of saving time-dependent solutions, used with <code class="docutils literal notranslate"><span class="pre">saveperiod</span></code> parameter. <code class="docutils literal notranslate"><span class="pre">auto</span></code> means to save every <code class="docutils literal notranslate"><span class="pre">saveperiod</span></code>-step solution; <code class="docutils literal notranslate"><span class="pre">fixed</span></code> means to save every <code class="docutils literal notranslate"><span class="pre">saveperiod</span></code>-nanosecond solution</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">saveperiod</span></code></p></td>
+<td><p>See <code class="docutils literal notranslate"><span class="pre">savemethod</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal notranslate"><span class="pre">initialization</span></code> section defines parameters for initialization:</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></td>
+<td><p>Initial temperature of the device</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SOP</span></code></p></td>
+<td><p>Initial value for the structural order parameter</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EOP</span></code></p></td>
+<td><p>Initial value for the electronic order parameter</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Tcvariance</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">method</span></code>: how to set up a nucleus of the high-temperature phase. <code class="docutils literal notranslate"><span class="pre">nucleus1</span></code> means to set up a semicircle with a radius of <code class="docutils literal notranslate"><span class="pre">radius</span></code> and a transition temperature shift of <code class="docutils literal notranslate"><span class="pre">Tcshift</span></code>, located at the midpoint of the <span class="math notranslate nohighlight">\(y = 0\)</span> edge</p></td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal notranslate"><span class="pre">solverparameters</span></code> section defines the parameters for both the Newton’s iteration solver (for nonlinear differential equations) and the linear solver (for solving linear equations in each iteration of the Newton’s method):</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Newtonabsolutetolerance</span></code></p></td>
+<td><p>Absolute tolerance for the Newton iteration</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Newtonrelativetolerance</span></code></p></td>
+<td><p>Relative tolerance for the Newton iteration. Meeting either the absolute tolerance or the relative tolerance is considered converged</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Newtonmaxiteration</span></code></p></td>
+<td><p>Limit of the iteration times for the Newton’s method</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">timesteptolerance</span></code></p></td>
+<td><p>Relative tolerance for the adaptive time stepping error</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">directsolver</span></code></p></td>
+<td><p>Which direct solver to use for solving the linear problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loglevel</span></code></p></td>
+<td><p>Log level; see <a class="reference external" href="https://fenics.readthedocs.io/projects/dolfin/en/2017.2.0/apis/api_log.html" title="FEniCS log level">FEniCS manual</a></p></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 
@@ -517,20 +583,20 @@ make<span class="w"> </span>html
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="run.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Manual</p>
+        <p class="prev-next-title">Build and run</p>
       </div>
     </a>
     <a class="right-next"
-       href="run.html"
+       href="visualization.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Build and run</p>
+        <p class="prev-next-title">Visualization</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -552,13 +618,7 @@ make<span class="w"> </span>html
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-fenics-c-version">Install FEniCS C++ version</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gnu-9">GNU 9</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boost-1-71">Boost 1.71</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dolfin">Install Dolfin</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-sphinx">Install sphinx</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input-file">Input file</a></li>
 </ul>
   </nav></div>
 

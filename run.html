@@ -51,6 +51,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'run';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Input" href="input.html" />
     <link rel="prev" title="Environment setup" href="prepare.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -178,6 +179,8 @@
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="prepare.html">Environment setup</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Build and run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input.html">Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
 </ul>
 
     </div>
@@ -421,10 +424,23 @@ document.write(`
 <h1>Build and run<a class="headerlink" href="#build-and-run" title="Permalink to this heading">#</a></h1>
 <section id="build">
 <h2>Build<a class="headerlink" href="#build" title="Permalink to this heading">#</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DDOLFIN_DIR<span class="o">=</span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/cmake<span class="w"> </span>-DBOOST_ROOT<span class="o">=</span><span class="nv">$HOME</span>/boost<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
+<p>For Ubuntu 22.04</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/dolfin.conf
+cmake<span class="w"> </span>-DBOOST_ROOT<span class="o">=</span><span class="nv">$HOME</span>/boost<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
 cmake<span class="w"> </span>--build<span class="w"> </span>build
 </pre></div>
 </div>
+<p>For Ubuntu 20.04</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/dolfin.conf
+cmake<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
+cmake<span class="w"> </span>--build<span class="w"> </span>build
+</pre></div>
+</div>
+<p>Or if you don’t want to source the dolfin.conf file, you can run cmake configuration like this</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DDOLFIN_DIR<span class="o">=</span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/cmake<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
+</pre></div>
+</div>
+<p>Then build as normal, <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">--build</span> <span class="pre">build</span></code></p>
 </section>
 </section>
 
@@ -448,6 +464,15 @@ cmake<span class="w"> </span>--build<span class="w"> </span>build
         <p class="prev-next-subtitle">previous</p>
         <p class="prev-next-title">Environment setup</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="input.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Input</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div></div>
   
