@@ -38,7 +38,7 @@ release = 'v0.0.1'
 # ones.
 extensions = [
     # 'breathe', 'exhale',
-    'sphinxcontrib.bibtex', 'myst_parser', 'sphinxfortran.fortran_domain', "sphinx_design", "sphinx_copybutton", "sphinxcontrib.mermaid", "sphinx_multiversion"]
+    'sphinxcontrib.bibtex', 'myst_parser', "sphinx_design", "sphinx_copybutton", "sphinxcontrib.mermaid", "sphinx_multiversion"]
 
 source_suffix = ['.rst', '.md']
 
@@ -115,7 +115,7 @@ html_css_files = ["custom.css"]
 
 # Tell sphinx what the pygments highlight language should be.
 # highlight_language = 'fortran'
-bibtex_bibfiles = ['references/refs.bib']
+bibtex_bibfiles = ['refs.bib']
 
 # ------ myst related settings
 myst_enable_extensions = [

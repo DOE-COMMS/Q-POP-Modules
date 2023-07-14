@@ -10,4 +10,6 @@ The main modules of Q-POP. We plan to gradually open source three main modules i
 ```{toctree}
 prepare.md
 run.md
+input.md
+visualization.md
 ```
