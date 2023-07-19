@@ -18,6 +18,9 @@
             - the time_schedule_file is read by the function read_in_time_schedule(filename)
     4. Initialize solution with read-in solutions: load_initialization
 
+4. Explanation for the file VO2_Nit_EfficAdap.py 
+	1. an efficient adaptive time stepping scheme is used
+
 ## Visualization of solutions
 The program generates solutions in pvd format that can be read and plot by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:
 Name       | Explanation
