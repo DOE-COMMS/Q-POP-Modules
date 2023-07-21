@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Visualization &#8212; Q-POP</title>
+    <title>Python program for IMT &#8212; Q-POP</title>
   
   
   
@@ -48,11 +48,10 @@
     <script src="_static/design-tabs.js"></script>
     <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'visualization';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'python';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Python program for IMT" href="python.html" />
-    <link rel="prev" title="Input" href="input.html" />
+    <link rel="prev" title="Visualization" href="visualization.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -180,8 +179,8 @@
 <li class="toctree-l1"><a class="reference internal" href="prepare.html">Environment setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">Build and run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input.html">Input</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Visualization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python.html">Python program for IMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Python program for IMT</a></li>
 </ul>
 
     </div>
@@ -253,7 +252,7 @@
       
       
       
-      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/blob/main/docs/visualization.md?plain=1" target="_blank"
+      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/blob/main/docs/python.md?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -270,7 +269,7 @@
       
       
       
-      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/edit/main/docs/visualization.md" target="_blank"
+      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/edit/main/docs/python.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -287,7 +286,7 @@
       
       
       
-      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/issues/new?title=Issue%20on%20page%20%2Fvisualization.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/DOE-COMMS/Q-POP-Modules/issues/new?title=Issue%20on%20page%20%2Fpython.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -317,7 +316,7 @@
       
       
       
-      <li><a href="_sources/visualization.md" target="_blank"
+      <li><a href="_sources/python.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -399,7 +398,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Visualization</h1>
+    <h1>Python program for IMT</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -409,7 +408,14 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-of-solutions">Visualization of solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-setup">Environment setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-code">Run the code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brief-explanation-of-the-code">Brief explanation of the code</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#file-vo2-gsblockatp-py">File VO2_GSBlockATP.py</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#file-vo2-nit-efficadap-py">File VO2_Nit_EfficAdap.py</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#results-visualization">Results Visualization</a></li>
 </ul>
             </nav>
         </div>
@@ -421,10 +427,47 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="visualization">
-<h1>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading">#</a></h1>
-<section id="visualization-of-solutions">
-<h2>Visualization of solutions<a class="headerlink" href="#visualization-of-solutions" title="Permalink to this heading">#</a></h2>
+  <section class="tex2jax_ignore mathjax_ignore" id="python-program-for-imt">
+<h1>Python program for IMT<a class="headerlink" href="#python-program-for-imt" title="Permalink to this heading">#</a></h1>
+<section id="environment-setup">
+<h2>Environment setup<a class="headerlink" href="#environment-setup" title="Permalink to this heading">#</a></h2>
+<p>The setup of FEniCS with python is easier than for C++, you can follow the official installation guide <a class="reference external" href="https://fenicsproject.org/download/archive/">here</a>.</p>
+</section>
+<section id="run-the-code">
+<h2>Run the code<a class="headerlink" href="#run-the-code" title="Permalink to this heading">#</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>xxx.py
+mpirun<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>python<span class="w"> </span>xxx.py<span class="w">  </span><span class="c1"># running the code on 4 cores in parallel</span>
+</pre></div>
+</div>
+</section>
+<section id="brief-explanation-of-the-code">
+<h2>Brief explanation of the code<a class="headerlink" href="#brief-explanation-of-the-code" title="Permalink to this heading">#</a></h2>
+<section id="file-vo2-gsblockatp-py">
+<h3>File VO2_GSBlockATP.py<a class="headerlink" href="#file-vo2-gsblockatp-py" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>For the block gauss seidel preconditioner code, we group the variables in the Allen-Cahn equation, and the variables in the PNP equations. We thee give the following order: the Allen-Cahn equation, temperature equation and the PNP equation. The Gauss Seidel block preconditioner uses the lower triangular blocks of the three system of equations.</p></li>
+<li><p>Nonlinear Solver: Newton solver</p></li>
+<li><p>linear solver: Preconditioner GMRES, the block preconditioner is inverted using a direct solver at this stage.</p></li>
+<li><p>The code allows the following automation:</p>
+<ol class="arabic simple">
+<li><p>Choose adaptive time stepping by setting the varibale:  adaptive_time = True</p></li>
+<li><p>User can input time schedule using the list variable: time_schedule_custom</p></li>
+<li><p>User can load time schedule from file: load_schedule, time_schedule_file
+- the time_schedule_file is read by the function read_in_time_schedule(filename)</p></li>
+<li><p>Initialize solution with read-in solutions: load_initialization</p></li>
+</ol>
+</li>
+</ul>
+</section>
+<section id="file-vo2-nit-efficadap-py">
+<h3>File VO2_Nit_EfficAdap.py<a class="headerlink" href="#file-vo2-nit-efficadap-py" title="Permalink to this heading">#</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. an efficient adaptive time stepping scheme is used
+</pre></div>
+</div>
+</section>
+</section>
+<section id="results-visualization">
+<h2>Results Visualization<a class="headerlink" href="#results-visualization" title="Permalink to this heading">#</a></h2>
 <p>The program generates solutions in pvd format that can be read and plot by <a class="reference external" href="https://www.paraview.org" title="ParaView website">ParaView</a>. The solution files are:</p>
 <table class="table">
 <thead>
@@ -436,7 +479,7 @@ document.write(`
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eta.pvd</span></code></p></td>
 <td><p>Time-dependent structural order parameter field</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">psi.pvd</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mu.pvd</span></code></p></td>
 <td><p>Time-dependent electronic order parameter field</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">phi.pvd</span></code></p></td>
@@ -451,11 +494,11 @@ document.write(`
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">p.pvd</span></code></p></td>
 <td><p>Time-dependent hole density field</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">niov.pvd</span></code></p></td>
-<td><p>Time-dependent ionized oxygen vacancy concentration field</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gamma_e.pvd</span></code></p></td>
+<td><p>Time-dependent transformed variable that corresponds to energy level of electrons</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nnov.pvd</span></code></p></td>
-<td><p>Time-dependent neutral oxygen vacancy concentration field</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gamma_h.pvd</span></code></p></td>
+<td><p>Time-dependent transformed variable that corresponds to energy level of holes</p></td>
 </tr>
 </tbody>
 </table>
@@ -476,22 +519,13 @@ document.write(`
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="input.html"
+       href="visualization.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Input</p>
+        <p class="prev-next-title">Visualization</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="python.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Python program for IMT</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div></div>
   
@@ -511,7 +545,14 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-of-solutions">Visualization of solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-setup">Environment setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-code">Run the code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brief-explanation-of-the-code">Brief explanation of the code</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#file-vo2-gsblockatp-py">File VO2_GSBlockATP.py</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#file-vo2-nit-efficadap-py">File VO2_Nit_EfficAdap.py</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#results-visualization">Results Visualization</a></li>
 </ul>
   </nav></div>
 
