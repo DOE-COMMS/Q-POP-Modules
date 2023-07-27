@@ -85,6 +85,7 @@ Name          | Explanation
 `Lx`          | Width of the device
 `Ly`          | Length of the device, along the electric field
 `Lz`          | Thickness of the device
+`mesh`        | Number of mesh vertices along a given dimension
 
 The `time` section defines the parameters related to the time:
 Name         | Explanation
