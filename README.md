@@ -112,8 +112,7 @@ Name                      | Explanation
 `directsolver`            | Which direct solver to use for solving the linear problem
 `loglevel`                | Log level; see [FEniCS manual](https://fenics.readthedocs.io/projects/dolfin/en/2017.2.0/apis/api_log.html "FEniCS log level")
 
-The example shown above simulates the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation")
-It will take about 2 hours on 16 processors of AMD EPYC 7742 CPU.
+The example shown above simulates the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation"). It will take about 2 hours on 16 processors of AMD EPYC 7742 CPU.
 
 ## Visualization of solutions
 The program generates solutions in pvd format that can be read and plot by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:
