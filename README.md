@@ -23,16 +23,20 @@ This program uses FEniCS C++ library for defining and solving finite-element par
         └── VO2_Nit_EfficAdap_v4.py
 ```
 
-## How to build the program
+## How to build and run the program
 The program uses cmake to build the executable. Simply create a build directory in the root directory of the package, and go to that build directory, and then enter in the command line: 
-
 ```
 cmake ..
 make
 ```
+The program supports parallel computing. To run the compiled executable on, say, 8 processors, run the below command in your desired directory:
+```
+mpirun -np 8 directory-to-executable/VO2_2tdevice
+```
+The program do require an input file for specifying parameters; see next section. The output files will be generated in the current directory.
 
 ## Input file
-The program is currently solving for a rectangular VO2 device, supplied with a direct voltage through a series resistor. The input file is written in xml form. Below is an example of the input file.
+The program is currently solving for a rectangular VO<sub>2</sub> device, supplied with a direct voltage through a series resistor. The input file is written in `xml` form and must be named as `input.xml`. Below is an example of the input file.
 ```
 <?xml version="1.0"?>
 <input>
@@ -106,6 +110,9 @@ Name                      | Explanation
 `timesteptolerance`       | Relative tolerance for the adaptive time stepping error
 `directsolver`            | Which direct solver to use for solving the linear problem
 `loglevel`                | Log level; see [FEniCS manual](https://fenics.readthedocs.io/projects/dolfin/en/2017.2.0/apis/api_log.html "FEniCS log level")
+
+The example shown above simulates the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation")
+It will take about 2 hours on 16 processors of AMD EPYC 7742 CPU.
 
 ## Visualization of solutions
 The program generates solutions in pvd format that can be read and plot by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:
