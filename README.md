@@ -1,6 +1,6 @@
 # Q-POP modules
 
-The main modules of Q-POP. We plan to gradually open source three main modules in the next few years (this year is 2023). This is still an ongoing effort, and the first one to be released is the insulator-metal transition module, while superconductor module and the dynamic phase-field module coming later.
+The main modules of Q-POP. We plan to gradually open source three main modules in the next few years (this year is 2023). This is still an ongoing effort, and the first one to be released is the insulator-metal transition module, while the superconductor module and the dynamic phase-field module are coming later.
 
 ## Setup development environment
 This program uses FEniCS C++ library for defining and solving finite-element partial differential equations. FEniCS C++ library of version 2019.1.0.post0 must be installed.
@@ -74,7 +74,7 @@ The program is currently solving for a rectangular VO<sub>2</sub> device, suppli
  </solverparameters>
 </input>
 ```
-Almost all the parameters are self-explanatory. The units are fixed and just for reminding the user of what the unit of the corresponding parameter is. The `external` section defines external parameters: 
+Almost all the parameters are self-explanatory. The units are fixed and just for reminding the user of the corresponding parameter's unit. The `external` section defines external parameters: 
 Name          | Explanation
 ------------- | -------------------
 `temperature` | Ambient temperature
@@ -115,7 +115,7 @@ Name                      | Explanation
 The example shown above simulates the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation"). It will take about 2 hours on 16 processors of AMD EPYC 7742 CPU.
 
 ## Visualization of solutions
-The program generates solutions in pvd format that can be read and plot by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:
+The program generates solutions in pvd format that can be read and plotted by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:
 Name       | Explanation
 ---------- | -----------
 `eta.pvd`  | Time-dependent structural order parameter field
@@ -128,3 +128,7 @@ Name       | Explanation
 `nnov.pvd` | Time-dependent neutral oxygen vacancy concentration field
 
 Each solution file listed above links to data at different moments. The data at a moment in turn links to data parallelly computed on distributed processors. The user can just use ParaView to read the `.pvd` files and then follow the guide of [ParaView](https://docs.paraview.org/en/latest/UsersGuide/index.html "ParaView user's guide") to plot spatiotemporal fields.
+
+The `psi.pvd` generated in the example is shown as several snapshots below.
+[morph.pdf](https://github.com/DOE-COMMS/Q-POP-Modules/files/12197852/morph.pdf)
+&Psi represents the electronic phases: &Psi = 0 means metal while &Psi = 1 means insulator. You will see a metallic filament growing and shrinking back and forth, generating an oscillating voltage output across the VO<sub>2</sub> film.
