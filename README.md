@@ -135,4 +135,4 @@ The `psi.pvd` generated in the example is shown as several snapshots below.
 <img src=https://github.com/DOE-COMMS/Q-POP-Modules/files/12197852/morph.pdf alt="Spatiotemporal evolution of the electronic order parameter" width="500">
 </p>
 
-&Psi; represents the electronic phases: &Psi; = 0 means metal while &Psi; = 1 means insulator. You will see a metallic filament growing and shrinking back and forth, generating an oscillating voltage output across the VO<sub>2</sub> film.
+&Psi; represents the electronic phases: &Psi; = 0 means metal while |&Psi;| ~ 1 means insulator. You will see a metallic filament growing and shrinking back and forth, generating an oscillating voltage output across the VO<sub>2</sub> film.
