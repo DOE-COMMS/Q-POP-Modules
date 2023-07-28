@@ -130,5 +130,9 @@ Name       | Explanation
 Each solution file listed above links to data at different moments. The data at a moment in turn links to data parallelly computed on distributed processors. The user can just use ParaView to read the `.pvd` files and then follow the guide of [ParaView](https://docs.paraview.org/en/latest/UsersGuide/index.html "ParaView user's guide") to plot spatiotemporal fields.
 
 The `psi.pvd` generated in the example is shown as several snapshots below.
-[morph.pdf](https://github.com/DOE-COMMS/Q-POP-Modules/files/12197852/morph.pdf)
-&Psi represents the electronic phases: &Psi = 0 means metal while &Psi = 1 means insulator. You will see a metallic filament growing and shrinking back and forth, generating an oscillating voltage output across the VO<sub>2</sub> film.
+
+<p align="center">
+<img src=https://github.com/DOE-COMMS/Q-POP-Modules/files/12197852/morph.pdf alt="Spatiotemporal evolution of the electronic order parameter" width="500">
+</p>
+
+&Psi; represents the electronic phases: &Psi; = 0 means metal while &Psi; = 1 means insulator. You will see a metallic filament growing and shrinking back and forth, generating an oscillating voltage output across the VO<sub>2</sub> film.
