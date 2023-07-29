@@ -143,14 +143,16 @@ Column name  | Explanation
 `V (V)`      | Voltage drop across the VO<sub>2</sub> film
 `R (Ohm)`    | Resistance of the VO<sub>2</sub> film
 
-The time-dependent voltage drop across the VO<sub>2</sub> film generated in the example is shown in the figure below.
-
-
-
-The `psi.pvd` generated in the example is shown as several snapshots below.
+The time-dependent voltage drop across the VO<sub>2</sub> film (Column `V (V)` in `log.txt`) generated in the example is shown in the figure below.
 
 <p align="center">
-<img src=https://github.com/DOE-COMMS/Q-POP-Modules/files/12197852/morph.pdf alt="Spatiotemporal evolution of the electronic order parameter" width="500">
+<img src="https://github.com/DOE-COMMS/Q-POP-Modules/files/12205719/sch_osc.pdf" alt="Temporal evolution of the voltage drop across the film." width="500">
 </p>
 
-&Psi; represents the electronic phases: &Psi; = 0 means metal while |&Psi;| ~ 1 means insulator. You will see a metallic filament growing and shrinking back and forth, generating an oscillating voltage output across the VO<sub>2</sub> film.
+You can see the self-oscillation of the voltage output. The `psi.pvd` generated in the example is shown as several snapshots below.
+
+<p align="center">
+<img src="https://github.com/DOE-COMMS/Q-POP-Modules/files/12197852/morph.pdf" alt="Spatiotemporal evolution of the electronic order parameter" width="500">
+</p>
+
+&Psi; represents the electronic phases: &Psi; = 0 means metal while |&Psi;| ~ 1 means insulator. You will see a metallic filament growing and shrinking back and forth, generating the oscillating voltage output across the VO<sub>2</sub> film.
