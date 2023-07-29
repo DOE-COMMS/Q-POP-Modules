@@ -129,6 +129,24 @@ Name       | Explanation
 
 Each solution file listed above links to data at different moments. The data at a moment in turn links to data parallelly computed on distributed processors. The user can just use ParaView to read the `.pvd` files and then follow the guide of [ParaView](https://docs.paraview.org/en/latest/UsersGuide/index.html "ParaView user's guide") to plot spatiotemporal fields.
 
+The program also generates and updates on the fly a log.txt file that summarizes the temporal evolution of several physical quantities and diagnostics. The columns are summarized in the table below.
+Column name  | Explanation
+------------ | -----------
+`#Step`      | Number of time steps
+`Time`       | Time in nanosecond
+`Time step`  | Current time step size
+`Tfail`      | Number of times the adaptive time stepping shrinks the time step
+`Nfail`      | Number of times the Newton's iterative solver diverges
+`Other fail` | Number of times the linear solver diverges
+`Av. EOP`    | Film-averaged electronic order parameter
+`Av. SOP`    | Film-averaged structural order parameter
+`V (V)`      | Voltage drop across the VO<sub>2</sub> film
+`R (Ohm)`    | Resistance of the VO<sub>2</sub> film
+
+The time-dependent voltage drop across the VO<sub>2</sub> film generated in the example is shown in the figure below.
+
+
+
 The `psi.pvd` generated in the example is shown as several snapshots below.
 
 <p align="center">
