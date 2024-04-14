@@ -2,9 +2,6 @@
 
 The main modules of Q-POP. We plan to gradually open source three main modules in the next few years (this year is 2023). This is still an ongoing effort, and the first one to be released is the insulator-metal transition module, while the superconductor module and the dynamic phase-field module are coming later.
 
-## Setup development environment
-This program uses FEniCS C++ library for defining and solving finite-element partial differential equations. FEniCS C++ library of version 2019.1.0.post0 must be installed.
-
 ## Folder structure
 ```sh
 ├── core
@@ -23,8 +20,13 @@ This program uses FEniCS C++ library for defining and solving finite-element par
         └── VO2_Nit_EfficAdap_v4.py
 ```
 
-## How to build and run the program
-The program uses cmake to build the executable. Simply create a build directory in the root directory of the package, and go to that build directory, and then enter in the command line: 
+## Q-POP-IMT
+
+### Setup development environment
+This module uses FEniCS C++ library and its Python interface (optional) for defining and solving finite-element partial differential equations. FEniCS C++ library of version 2019.1.0.post0 must be installed while its Python interface is optional.
+
+### How to build and run the program
+The module uses cmake to build the executable. Simply create a build directory in the root directory of the package, and go to that build directory, and then enter in the command line: 
 ```
 cmake ..
 make
@@ -33,9 +35,13 @@ The program supports parallel computing. To run the compiled executable on, say,
 ```
 mpirun -np 8 directory-to-executable/VO2_2tdevice
 ```
+Alternatively, one can use the Python interface of the module without any compilation (require Python interface of FEniCS installed):
+```
+mpirun -np 8 python directory-to-python-script/VO2_Nit_EfficAdap_v4.py
+```
 The program do require an input file for specifying parameters; see next section. The output files will be generated in the current directory.
 
-## Input file
+### Input file
 The program is currently solving for a rectangular VO<sub>2</sub> device, supplied with a direct voltage through a series resistor. The input file is written in `xml` form and must be named as `input.xml`. Below is an example of the input file.
 ```
 <?xml version="1.0"?>
@@ -114,7 +120,7 @@ Name                      | Explanation
 
 The example shown above simulates the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation"). It will take about 2 hours on 16 processors of AMD EPYC 7742 CPU.
 
-## Visualization of solutions
+### Visualization of solutions
 The program generates solutions in pvd format that can be read and plotted by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:
 Name       | Explanation
 ---------- | -----------
