@@ -3,14 +3,14 @@ sd_hide_title: true
 title: Manual
 ---
 
-This repository is the main modules of Q-POP. We plan to gradually open source three main modules in the next few years (this year is 2023). This is still an ongoing effort, and the first one to be released is the insulator-metal transition module, while superconductor module and the dynamic phase-field module coming later.
+The core modules of Q-POP (**Q**uantum **P**hase-field **O**pen-source **P**ackage) aim to deliver flexible, scalable, and extendable phase-field solvers that will enable researchers to study quantum materials and phase transitions with ease. The software will be made open-source in three stages, with new physics capabilities added with release. The module for insulator-metal transitions (Q-POP-IMT) was the first to be released in April 2024. The superconductor and the dynamical phase-field modules will follow soon.
 
 # Manual
 
 ```{toctree}
 prepare.md
 run.md
-input.md
+examples.md
 visualization.md
 python.md
 ```

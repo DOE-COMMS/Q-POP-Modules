@@ -1,7 +1,7 @@
-# Python program for IMT
+# Python Program for IMT
 
 ## Environment setup
-The setup of FEniCS with python is easier than for C++, you can follow the official installation guide [here](https://fenicsproject.org/download/archive/).
+The setup of FEniCS with Python is easier than for C++, you can follow the official installation guide [here](https://fenicsproject.org/download/archive/).
 
 ## Run the code 
 ```sh
@@ -11,9 +11,9 @@ mpirun -n 4 python xxx.py  # running the code on 4 cores in parallel
 
 ## Brief explanation of the code
 ### File VO2_GSBlockATP.py 
--    For the block gauss seidel preconditioner code, we group the variables in the Allen-Cahn equation, and the variables in the PNP equations. We thee give the following order: the Allen-Cahn equation, temperature equation and the PNP equation. The Gauss Seidel block preconditioner uses the lower triangular blocks of the three system of equations. 
--   Nonlinear Solver: Newton solver 
--   linear solver: Preconditioner GMRES, the block preconditioner is inverted using a direct solver at this stage. 
+-   For the block gauss seidel preconditioner code, we group the variables in the Allen-Cahn equation, and the variables in the PNP equations. We then give the following order: the Allen-Cahn equation, temperature equation and the PNP equation. The Gauss Seidel block preconditioner uses the lower triangular blocks of the three system of equations. 
+-   Non-linear Solver: Newton solver 
+-   Linear solver: Preconditioner GMRES, the block preconditioner is inverted using a direct solver at this stage. 
 
 - The code allows the following automation:
     1. Choose adaptive time stepping by setting the varibale:  adaptive_time = True 
@@ -23,7 +23,7 @@ mpirun -n 4 python xxx.py  # running the code on 4 cores in parallel
     4. Initialize solution with read-in solutions: load_initialization
 
 ### File VO2_Nit_EfficAdap.py 
-	1. an efficient adaptive time stepping scheme is used
+	1. An efficient adaptive time-stepping scheme is used
 
 ## Results Visualization
 The program generates solutions in pvd format that can be read and plot by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:

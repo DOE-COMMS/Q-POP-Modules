@@ -1,6 +1,7 @@
-# Q-POP modules
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/DOE-COMMS/Q-POP-Modules/total)
 
-The main modules of Q-POP. We plan to gradually open source three main modules in the next few years (this year is 2023). This is still an ongoing effort, and the first one to be released is the insulator-metal transition module, while the superconductor module and the dynamic phase-field module are coming later.
+# Q-POP modules
+The core modules of Q-POP (**Q**uantum **P**hase-field **O**open-source **P**ackage) aim to deliver flexible, scalable, and extendable phase-field solvers that will enable researchers to study quantum materials and phase transitions with ease. The software will be made open-source in three stages, with new physics capabilities added with release. The module for insulator-metal transitions (Q-POP-IMT) was the first to be released in April 2024. The superconductor and the dynamical phase-field modules will follow soon.
 
 ## Folder structure
 ```sh
@@ -26,7 +27,7 @@ The main modules of Q-POP. We plan to gradually open source three main modules i
 This module uses FEniCS C++ library and its Python interface (optional) for defining and solving finite-element partial differential equations. FEniCS C++ library of version 2019.1.0.post0 must be installed while its Python interface is optional.
 
 ### How to build and run the program
-The module uses cmake to build the executable. Simply create a build directory in the root directory of the package, and go to that build directory, and then enter in the command line: 
+Q-POP-IMT uses cmake to build its executable. Simply create a build directory in the root directory of the package and enter it, then run the following in your preferred terminal: 
 ```
 cmake ..
 make
@@ -35,14 +36,14 @@ The program supports parallel computing. To run the compiled executable on, say,
 ```
 mpirun -np 8 directory-to-executable/VO2_2tdevice
 ```
-Alternatively, one can use the Python interface of the module without any compilation (require Python interface of FEniCS installed):
+Alternatively, one can use the Python interface of the module without any compilation (requires the Python interface of FEniCS to be installed):
 ```
 mpirun -np 8 python directory-to-python-script/VO2_Nit_EfficAdap_v4.py
 ```
-The program do require an input file for specifying parameters; see next section. The output files will be generated in the current directory.
+The program requires an input file for specifying parameters; see following section for details. The output files will be generated in the current directory.
 
 ### Input file
-The program is currently solving for a rectangular VO<sub>2</sub> device, supplied with a direct voltage through a series resistor. The input file is written in `xml` form and must be named as `input.xml`. Below is an example of the input file.
+This example simulates a rectangular VO<sub>2</sub> device, supplied with a direct voltage through a series resistor. The input file is written in `xml` form and must be named as `input.xml`. Below is an example of the input file.
 ```
 <?xml version="1.0"?>
 <input>
@@ -80,7 +81,7 @@ The program is currently solving for a rectangular VO<sub>2</sub> device, suppli
  </solverparameters>
 </input>
 ```
-Almost all the parameters are self-explanatory. The units are fixed and just for reminding the user of the corresponding parameter's unit. The `external` section defines external parameters: 
+Almost all the parameters are self-explanatory. The units are fixed and serve only to remind the user of the corresponding parameter's unit. The `external` section defines external parameters: 
 Name          | Explanation
 ------------- | -------------------
 `temperature` | Ambient temperature
@@ -118,7 +119,7 @@ Name                      | Explanation
 `directsolver`            | Which direct solver to use for solving the linear problem
 `loglevel`                | Log level; see [FEniCS manual](https://fenics.readthedocs.io/projects/dolfin/en/2017.2.0/apis/api_log.html "FEniCS log level")
 
-The example shown above simulates the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation"). It will take about 2 hours on 16 processors of AMD EPYC 7742 CPU.
+The example shown above simulates the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation"). In our test runs, the simulation took 2 hours to complete using 16 processors of an AMD EPYC 7742 CPU.
 
 ### Visualization of solutions
 The program generates solutions in pvd format that can be read and plotted by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:
