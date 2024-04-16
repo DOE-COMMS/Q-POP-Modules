@@ -30,6 +30,7 @@ jobs:
           set-safe-directory: false
       - name: Build external doc
         run: |
+            export PATH=$PATH:$HOME/.local/bin
             cd docs
             make html
             make latexpdf
