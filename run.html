@@ -1,15 +1,14 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Build and run &#8212; Q-POP</title>
+    <title>Build and Run &#8212; Q-POP</title>
   
   
   
@@ -19,40 +18,39 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c2f868ff" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=7cef792c"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
-    <script src="_static/design-tabs.js"></script>
-    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'run';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Input" href="input.html" />
-    <link rel="prev" title="Environment setup" href="prepare.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Environment Setup" href="prepare.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -63,6 +61,15 @@
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -116,9 +123,11 @@
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="index.html">
+  
   
   
   
@@ -138,8 +147,8 @@
           
           
           
-          <a href="https://github.com/DOE-COMMS" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github"></i></span>
-            <label class="sr-only">GitHub</label></a>
+          <a href="https://github.com/DOE-COMMS" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
         </li>
         <li class="nav-item">
           
@@ -150,8 +159,8 @@
           
           
           
-          <a href="mailto:lqc3@psu.edu" title="Email" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-regular fa-envelope"></i></span>
-            <label class="sr-only">Email</label></a>
+          <a href="mailto:lqc3@psu.edu" title="Email" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-regular fa-envelope fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Email</span></a>
         </li>
         <li class="nav-item">
           
@@ -162,8 +171,8 @@
           
           
           
-          <a href="https://sites.psu.edu/doecomms/news/" title="DOE COMMS" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-regular fa-file"></i></span>
-            <label class="sr-only">DOE COMMS</label></a>
+          <a href="https://sites.psu.edu/doecomms/news/" title="DOE COMMS" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-regular fa-file fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">DOE COMMS</span></a>
         </li>
 </ul></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
@@ -177,11 +186,11 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="prepare.html">Environment setup</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Build and run</a></li>
-<li class="toctree-l1"><a class="reference internal" href="input.html">Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prepare.html">Environment Setup</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Build and Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python.html">Python program for IMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Python Program for IMT</a></li>
 </ul>
 
     </div>
@@ -369,20 +378,22 @@
 </button>
 
 
+
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -399,7 +410,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Build and run</h1>
+    <h1>Build and Run</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -423,33 +434,40 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="build-and-run">
-<h1>Build and run<a class="headerlink" href="#build-and-run" title="Permalink to this heading">#</a></h1>
+<h1>Build and Run<a class="headerlink" href="#build-and-run" title="Permalink to this heading">#</a></h1>
 <section id="build">
 <h2>Build<a class="headerlink" href="#build" title="Permalink to this heading">#</a></h2>
-<p>For Ubuntu 22.04</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/dolfin.conf
-cmake<span class="w"> </span>-DBOOST_ROOT<span class="o">=</span><span class="nv">$HOME</span>/boost<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
-cmake<span class="w"> </span>--build<span class="w"> </span>build
-</pre></div>
-</div>
-<p>For Ubuntu 20.04</p>
+<p>In the base directory ‘Q-POP-Modules’, run</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/dolfin.conf
 cmake<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
 cmake<span class="w"> </span>--build<span class="w"> </span>build
 </pre></div>
 </div>
-<p>Or if you don’t want to source the dolfin.conf file, you can run cmake configuration like this</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DDOLFIN_DIR<span class="o">=</span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/cmake<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
+<p>if using Ubuntu 20.04, and</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/dolfin.conf
+cmake<span class="w"> </span>-DBOOST_ROOT<span class="o">=</span><span class="nv">$HOME</span>/boost<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
+cmake<span class="w"> </span>--build<span class="w"> </span>build
 </pre></div>
 </div>
-<p>Then build as normal, <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">--build</span> <span class="pre">build</span></code></p>
+<p>if using Ubuntu 22.04.</p>
+<p>The above can also be run to similar effect by combining the first two commands. This builds Q-POP-IMT without adding Dolfin’s paths to the environment.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DDOLFIN_DIR<span class="o">=</span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/cmake<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
+cmake<span class="w"> </span>--build<span class="w"> </span>build
+</pre></div>
+</div>
 </section>
 <section id="run">
 <h2>Run<a class="headerlink" href="#run" title="Permalink to this heading">#</a></h2>
-<p>To run the simulation,</p>
+<p>To run the simulation, there are two equivalent methods:</p>
 <ol class="arabic simple">
-<li><p>You can cd into the <code class="docutils literal notranslate"><span class="pre">build/imt/imt-cpp</span></code> folder, copy a input file to here, and run the <code class="docutils literal notranslate"><span class="pre">qpop-imt</span></code> executable directly from the build directory.</p></li>
-<li><p>Or you can add the path of <code class="docutils literal notranslate"><span class="pre">build/imt/imt-cpp</span></code> folder to the PATH environment variable, and run the <code class="docutils literal notranslate"><span class="pre">qpop-imt</span></code> command from any folder with an input file.</p></li>
+<li><p>You can change directory (cd) to the <code class="docutils literal notranslate"><span class="pre">build/imt/imt-cpp</span></code> folder, create an input file (see ‘input.md’ for an example), and then run the <code class="docutils literal notranslate"><span class="pre">qpop-imt</span></code> executable directly from the build directory using</p></li>
+</ol>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">2</span><span class="w"> </span>qpop-imt
+</pre></div>
+</div>
+<p>where the number following the option ‘np’ is the number of processors to use.</p>
+<ol class="arabic simple" start="2">
+<li><p>Or you can add the path <code class="docutils literal notranslate"><span class="pre">build/imt/imt-cpp</span></code> folder to the PATH environment variable using <code class="docutils literal notranslate"><span class="pre">PATH=&quot;&lt;ADD</span> <span class="pre">PATH</span> <span class="pre">TO</span> <span class="pre">Q-POP-MODULES</span> <span class="pre">HERE&gt;/build/imt/imt-cpp${PATH:+:${PATH}}&quot;</span></code>, which will allow the use of <code class="docutils literal notranslate"><span class="pre">qpop-imt</span></code> as a command from any folder with an input file.</p></li>
 </ol>
 </section>
 </section>
@@ -460,11 +478,10 @@ cmake<span class="w"> </span>--build<span class="w"> </span>build
 
               
               
-                <footer class="bd-footer-article">
+              
+              
+                <footer class="prev-next-footer">
                   
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="prepare.html"
@@ -472,22 +489,19 @@ cmake<span class="w"> </span>--build<span class="w"> </span>build
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Environment setup</p>
+        <p class="prev-next-title">Environment Setup</p>
       </div>
     </a>
     <a class="right-next"
-       href="input.html"
+       href="examples.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Input</p>
+        <p class="prev-next-title">Examples</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -525,9 +539,10 @@ By Xiaoxing Cheng
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
-      © Copyright 2023, DOE COMMS.
+      © Copyright 2024, DOE COMMS.
       <br/>
     
   </p>
@@ -551,8 +566,8 @@ By Xiaoxing Cheng
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>

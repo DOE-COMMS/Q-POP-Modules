@@ -1,7 +1,7 @@
-# Input
+# Examples
 
-## Input file
-The program is currently solving for a rectangular VO2 device, supplied with a direct voltage through a series resistor. The input file is written in xml form. Below is an example of the input file.
+## Example Input file
+This example simulates a rectangular VO<sub>2</sub> device, supplied with a direct voltage through a series resistor. The input file is written in xml form. Below is an example of the input file.
 ```xml
 <?xml version="1.0"?>
 <input>
@@ -40,7 +40,7 @@ The program is currently solving for a rectangular VO2 device, supplied with a d
 </input>
 ```
 
-Almost all the parameters are self-explanatory. The units are fixed and just for reminding the user of what the unit of the corresponding parameter is. The `external` section defines external parameters: 
+Almost all the parameters are self-explanatory. The units are fixed and serve only to remind the user of the corresponding parameter's unit. The `external` section defines external parameters: 
 
 Name          | Explanation
 ------------- | -------------------

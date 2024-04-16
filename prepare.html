@@ -1,15 +1,14 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Environment setup &#8212; Q-POP</title>
+    <title>Environment Setup &#8212; Q-POP</title>
   
   
   
@@ -19,39 +18,38 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c2f868ff" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=7cef792c"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
-    <script src="_static/design-tabs.js"></script>
-    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'prepare';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Build and run" href="run.html" />
+    <link rel="next" title="Build and Run" href="run.html" />
     <link rel="prev" title="Manual" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -63,6 +61,15 @@
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -116,9 +123,11 @@
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="index.html">
+  
   
   
   
@@ -138,8 +147,8 @@
           
           
           
-          <a href="https://github.com/DOE-COMMS" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github"></i></span>
-            <label class="sr-only">GitHub</label></a>
+          <a href="https://github.com/DOE-COMMS" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
         </li>
         <li class="nav-item">
           
@@ -150,8 +159,8 @@
           
           
           
-          <a href="mailto:lqc3@psu.edu" title="Email" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-regular fa-envelope"></i></span>
-            <label class="sr-only">Email</label></a>
+          <a href="mailto:lqc3@psu.edu" title="Email" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-regular fa-envelope fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Email</span></a>
         </li>
         <li class="nav-item">
           
@@ -162,8 +171,8 @@
           
           
           
-          <a href="https://sites.psu.edu/doecomms/news/" title="DOE COMMS" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-regular fa-file"></i></span>
-            <label class="sr-only">DOE COMMS</label></a>
+          <a href="https://sites.psu.edu/doecomms/news/" title="DOE COMMS" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-regular fa-file fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">DOE COMMS</span></a>
         </li>
 </ul></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
@@ -177,11 +186,11 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Environment setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">Build and run</a></li>
-<li class="toctree-l1"><a class="reference internal" href="input.html">Input</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">Build and Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python.html">Python program for IMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Python Program for IMT</a></li>
 </ul>
 
     </div>
@@ -369,20 +378,22 @@
 </button>
 
 
+
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -399,7 +410,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Environment setup</h1>
+    <h1>Environment Setup</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -409,13 +420,13 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-fenics-c-version">Install FEniCS C++ version</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-fenics-c">Installing FEniCS C++</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gnu-9">GNU 9</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boost-1-71">Boost 1.71</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dolfin">Install Dolfin</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfin">Dolfin</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-sphinx">Install sphinx</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-sphinx">Installing Sphinx</a></li>
 </ul>
             </nav>
         </div>
@@ -428,16 +439,20 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="environment-setup">
-<h1>Environment setup<a class="headerlink" href="#environment-setup" title="Permalink to this heading">#</a></h1>
+<h1>Environment Setup<a class="headerlink" href="#environment-setup" title="Permalink to this heading">#</a></h1>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
-<p>We recommend using Ubuntu 20.04.</p>
+<p>For a hassle-free installation, it is recommended to use Ubuntu 20.04.</p>
 </div>
-<section id="install-fenics-c-version">
-<h2>Install FEniCS C++ version<a class="headerlink" href="#install-fenics-c-version" title="Permalink to this heading">#</a></h2>
+<section id="installing-fenics-c">
+<h2>Installing FEniCS C++<a class="headerlink" href="#installing-fenics-c" title="Permalink to this heading">#</a></h2>
 <section id="gnu-9">
 <h3>GNU 9<a class="headerlink" href="#gnu-9" title="Permalink to this heading">#</a></h3>
-<p>It is necessary to use gnu compiler v9, if you are on system that defaults to another version of gnu compiler, then you need to switch to gnu-9</p>
+<p>It is necessary to use GNU Compiler Collection 9. On systems that default to other versions of the GNU compiler, manually switching to GNU-9 will be required.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Always exercise caution while running commands using sudo. If you do not have root access, please contact your system administrator.</p>
+</div>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>gcc-9<span class="w"> </span>g++-9<span class="w"> </span>gfortran-9
 sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--install<span class="w"> </span>/usr/bin/gcc<span class="w"> </span>gcc<span class="w"> </span>/usr/bin/gcc-9<span class="w"> </span><span class="m">90</span><span class="w"> </span>--slave<span class="w"> </span>/usr/bin/gcov<span class="w"> </span>gcov<span class="w"> </span>/usr/bin/gcov-9
 sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--install<span class="w"> </span>/usr/bin/g++<span class="w"> </span>g++<span class="w"> </span>/usr/bin/g++-9<span class="w"> </span><span class="m">90</span>
@@ -450,14 +465,14 @@ sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<
 </section>
 <section id="boost-1-71">
 <h3>Boost 1.71<a class="headerlink" href="#boost-1-71" title="Permalink to this heading">#</a></h3>
-<p>In newer version of Boost, you will meet this error</p>
+<p>In newer versions of Boost, the following error may be encountered:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>dolfin/io/VTKWriter.cpp:27:10:<span class="w"> </span>fatal<span class="w"> </span>error:<span class="w"> </span>boost/detail/endian.hpp:<span class="w"> </span>No<span class="w"> </span>such<span class="w"> </span>file<span class="w"> </span>or<span class="w"> </span>directory
 <span class="w">   </span><span class="m">27</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="c1">#include &lt;boost/detail/endian.hpp&gt;</span>
 <span class="w">      </span><span class="p">|</span><span class="w">          </span>^~~~~~~~~~~~~~~~~~~~~~~~~
 compilation<span class="w"> </span>terminated.
 </pre></div>
 </div>
-<p>We found boost 1.71 works fine with FEniCS 2019. If you are using Ubuntu 20.04, then you can <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">libboost-dev</span></code> to install boost 1.71. If you are on newer version of Ubuntu, then you will have to build boost from source.</p>
+<p>All testing was done using Boost-1.71.0, which is fully compatible with FEniCS 2019. On systems running Ubuntu 20.04, <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">libboost-dev</span></code> may be used to install Boost-1.71.0. On newer versions of Ubuntu, Boost will need to be built from source:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://boostorg.jfrog.io/artifactory/main/release/1.71.0/source/boost_1_71_0.tar.gz
 tar<span class="w"> </span>-xzf<span class="w"> </span>boost_1_71_0.tar.gz
 <span class="nb">cd</span><span class="w"> </span>boost_1_71_0/
@@ -465,9 +480,10 @@ tar<span class="w"> </span>-xzf<span class="w"> </span>boost_1_71_0.tar.gz
 ./b2<span class="w"> </span>install
 </pre></div>
 </div>
+<p>This will install Boost-1.71.0 to the system’s home directory. To install elsewhere, the prefix option in the above command must be set to a desired path.</p>
 </section>
-<section id="install-dolfin">
-<h3>Install Dolfin<a class="headerlink" href="#install-dolfin" title="Permalink to this heading">#</a></h3>
+<section id="dolfin">
+<h3>Dolfin<a class="headerlink" href="#dolfin" title="Permalink to this heading">#</a></h3>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>git<span class="w"> </span>libeigen3-dev<span class="w"> </span>python3-pip<span class="w"> </span>cmake<span class="w"> </span>
 pip3<span class="w"> </span>install<span class="w"> </span>fenics-ffc<span class="w"> </span>--upgrade
 <span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export PATH=$PATH:$HOME/.local/bin&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
@@ -478,21 +494,28 @@ mkdir<span class="w"> </span>build
 <span class="nb">cd</span><span class="w"> </span>build
 </pre></div>
 </div>
-<p>If you are using Ubuntu 20.04, use <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-DCMAKE_INSTALL_PREFIX=$HOME/fenics/dolfin</span> <span class="pre">..</span></code>, while if you are using Ubuntu 22.04 <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-DCMAKE_INSTALL_PREFIX=$HOME/fenics/dolfin</span> <span class="pre">-DBOOST_ROOT=$HOME/boost</span> <span class="pre">..</span></code></p>
+<p>Then, on Ubuntu 20.04, use</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="nv">$HOME</span>/fenics/dolfin<span class="w"> </span>..
+</pre></div>
+</div>
+<p>Or, on systems with Ubuntu 22.04, use</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="nv">$HOME</span>/fenics/dolfin<span class="w"> </span>-DBOOST_ROOT<span class="o">=</span><span class="nv">$HOME</span>/boost<span class="w"> </span>..
+</pre></div>
+</div>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make
 make<span class="w"> </span>install
 <span class="nb">cd</span><span class="w"> </span>../..
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source /home/xcheng/fenics/dolfin/share/dolfin/dolfin.conf&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source </span><span class="nv">$HOME</span><span class="s2">/fenics/dolfin/share/dolfin/dolfin.conf&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
 </pre></div>
 </div>
-<p>You need to close and reopen the terminal to make update the environment variables.</p>
+<p>A new terminal must be opened for changes to take effect. Alternatively, <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">~/.bashrc</span></code> can be used.</p>
 </section>
 </section>
-<section id="install-sphinx">
-<h2>Install sphinx<a class="headerlink" href="#install-sphinx" title="Permalink to this heading">#</a></h2>
+<section id="installing-sphinx">
+<h2>Installing Sphinx<a class="headerlink" href="#installing-sphinx" title="Permalink to this heading">#</a></h2>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>only needed if you want to build the documentation locally</p>
+<p>Optional: Build documentation locally</p>
 </div>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">Sphinx</span><span class="o">==</span><span class="m">6</span>.2.1
 pip<span class="w"> </span>install<span class="w"> </span>myst-parser<span class="w"> </span>sphinxcontrib-bibtex<span class="w"> </span>sphinx_design<span class="w"> </span>sphinx_copybutton<span class="w"> </span>sphinxcontrib-mermaid<span class="w"> </span>sphinx_multiversion<span class="w"> </span>sphinx-book-theme
@@ -511,11 +534,10 @@ make<span class="w"> </span>html
 
               
               
-                <footer class="bd-footer-article">
+              
+              
+                <footer class="prev-next-footer">
                   
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="index.html"
@@ -531,14 +553,11 @@ make<span class="w"> </span>html
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Build and run</p>
+        <p class="prev-next-title">Build and Run</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -553,13 +572,13 @@ make<span class="w"> </span>html
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-fenics-c-version">Install FEniCS C++ version</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-fenics-c">Installing FEniCS C++</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gnu-9">GNU 9</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boost-1-71">Boost 1.71</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dolfin">Install Dolfin</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfin">Dolfin</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-sphinx">Install sphinx</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-sphinx">Installing Sphinx</a></li>
 </ul>
   </nav></div>
 
@@ -581,9 +600,10 @@ By Xiaoxing Cheng
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
-      © Copyright 2023, DOE COMMS.
+      © Copyright 2024, DOE COMMS.
       <br/>
     
   </p>
@@ -607,8 +627,8 @@ By Xiaoxing Cheng
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>
