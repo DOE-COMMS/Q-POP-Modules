@@ -18,7 +18,7 @@ The core modules of Q-POP (**Q**uantum **P**hase-field **O**open-source **P**ack
     │   └── VO2_2tdevice.ufl
     └── imt-py
         ├── VO2_GSBlockATP.py
-        └── VO2_Nit_EfficAdap_v4.py
+        └── VO2_Nit_EfficAdap.py
 ```
 
 ## Q-POP-IMT
@@ -38,7 +38,7 @@ mpirun -np 8 directory-to-executable/VO2_2tdevice
 ```
 Alternatively, one can use the Python interface of the module without any compilation (requires the Python interface of FEniCS to be installed):
 ```
-mpirun -np 8 python directory-to-python-script/VO2_Nit_EfficAdap_v4.py
+mpirun -np 8 python directory-to-python-script/VO2_Nit_EfficAdap.py
 ```
 The program requires an input file for specifying parameters; see following section for details. The output files will be generated in the current directory.
 
