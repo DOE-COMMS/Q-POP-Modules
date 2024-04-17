@@ -24,7 +24,7 @@ The core modules of Q-POP (**Q**uantum **P**hase-field **O**open-source **P**ack
 ## Q-POP-IMT
 
 ### Setup development environment
-This module uses FEniCS C++ library and its Python interface (optional) for defining and solving finite-element partial differential equations. FEniCS C++ library of version 2019.1.0.post0 must be installed while its Python interface is optional.
+This module uses FEniCS C++ library and its Python interface (optional) for defining and solving finite-element partial differential equations. FEniCS C++ library of version 2019.1.0.post0 must be installed while its Python interface is optional. Note that this version of FEniCS is compatible only with openMPI v3.1 or older versions, because openMPI after v3.1 has undergone some major API updates.
 
 ### How to build and run the program
 Q-POP-IMT uses cmake to build its executable. Simply create a build directory in the root directory of the package and enter it, then run the following in your preferred terminal: 
@@ -163,3 +163,6 @@ You can see the self-oscillation of the voltage output. The `psi.pvd` generated 
 </p>
 
 $\Psi$ represents the electronic phases: $\Psi=0$ means metal while $|\Psi|\sim 1$ means insulator. You will see a metallic filament growing and shrinking back and forth, generating the oscillating voltage output across the VO<sub>2</sub> film.
+
+## Acknowledgement
+This open-source software development is supported as part of the Computational Materials Sciences Program funded by the U.S. Department of Energy, Office of Science, Basic Energy Sciences, under Award No. DE-SC0020145.
