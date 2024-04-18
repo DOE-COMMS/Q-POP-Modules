@@ -1,6 +1,8 @@
 find_package(DOLFIN REQUIRED)
 find_package(Boost REQUIRED COMPONENTS timer)
 
+include(${DOLFIN_USE_FILE})
+
 # Default build type (can be overridden by user)
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING

@@ -17,7 +17,7 @@
 #include <math.h>
 #include <fstream>
 #include <dolfin.h>
-#include "VO2_2tdevice.h"
+#include "imt.h"
 #include "pugixml.hpp"
 #include "input.h"
 #include <mpi.h>
@@ -100,7 +100,7 @@ class TcVariation : public Expression
 class BoundaryY : public SubDomain
 {
   public:
-  BoundaryY(double y)
+  BoundaryY(double y) : SubDomain()
   {
     _y = y;
   }
@@ -131,7 +131,7 @@ double ramped_delV(double t, double tramp, double delV_i, double delV0)
 }
 
 // Calculate relative error between two solutions on the same function space using specified norm type 
-double rel_err(std::shared_ptr<const Function> u1, std::shared_ptr<const Function> u2, VO2_2tdevice::Form_scalernorm& scalernorm)
+double rel_err(std::shared_ptr<const Function> u1, std::shared_ptr<const Function> u2, imt::Form_scalernorm& scalernorm)
 {
   Function delu(*u1);  // Copy constructor
   std::shared_ptr<const Function> s(nullptr);
@@ -155,30 +155,38 @@ double rel_err(std::shared_ptr<const Function> u1, std::shared_ptr<const Functio
   return r;
 }
 
-void save_sol(std::vector<File*> files, std::shared_ptr<const Function> u, const double units[6], double t)
+void save_sol(std::vector<File*> files, std::shared_ptr<const Function> u, const Function& ca, const double units[6], double t)
 {
   std::shared_ptr<Function> tmp(nullptr);
 
   tmp = split(*u, 0);
   tmp->rename("eta", "eta");
   *(files[0]) << std::pair<const Function*, double>(&(*tmp), t);
+
   tmp = split(*u, 1);
   tmp->rename("mu", "mu");
   *(files[1]) << std::pair<const Function*, double>(&(*tmp), t);
+
+  /*
   tmp = split(*u, 2);
   tmp->rename("gamma_e", "gamma_e");
   *(files[2]) << std::pair<const Function*, double>(&(*tmp), t);
   tmp = split(*u, 3);
   tmp->rename("gamma_h", "gamma_h");
   *(files[3]) << std::pair<const Function*, double>(&(*tmp), t);
+  */
+
   tmp = split(*u, 4, true);  // Deep copy
   *(tmp->vector()) *= units[4];
   tmp->rename("phi", "phi");
-  *(files[4]) << std::pair<const Function*, double>(&(*tmp), t);
+  *(files[2]) << std::pair<const Function*, double>(&(*tmp), t);
+
   tmp = split(*u, 5, true);  // Deep copy
   *(tmp->vector()) *= units[5];
   tmp->rename("T", "T");
-  *(files[5]) << std::pair<const Function*, double>(&(*tmp), t);
+  *(files[3]) << std::pair<const Function*, double>(&(*tmp), t);
+  
+  *(files[4]) << std::pair<const Function*, double>(&(ca), t);
 }
 
 
@@ -258,16 +266,18 @@ int main()
   //----------------------------------------------------------------
   // Define computational parameters
   //----------------------------------------------------------------
-  int nx = 50, ny = 20, max_div = 100, max_iter = 30, rseed = 11793;
+  int nx = 50, ny = 20, max_div = 100, max_iter = 30, rseed = 11793, kry_max_iter = 1000;
   double Ly = 20e-9/LUNIT, tf = 5000e-9/TUNIT, saveperiod = 5.0, alpha = 1e-6, 
          tol_tstep = 0.01, r_t_max = 4.0, r_t_min = 0.2, s_t = 0.9,
          rel_par = 0.9, newton_abs_tol = 1e-6, newton_rel_tol = 1e-3, 
          tramp = 10e-9/TUNIT, sigma = 0.1*double(*TC), Tcvar0 = 2.0*sigma,
          corr_len = 0.2*Ly, TCIMP0 = -20.0/TEMPUNIT, RIMPDIS = 3e-9/LUNIT, DWWIDTH = 10e-9/LUNIT,
          bump = 0.02, T_i = 300.0/TEMPUNIT, eta_i = 0.791296*sqrt(2), mu_i = -0.914352*sqrt(2),
-         phi_i = -1000.0, gamma_ei, gamma_hi, curr_i, RVO2_i, Vfrac_i, delV0 = 0.07/VUNIT, delV_i;
-  std::string savemethod = "fix", directsolver = "superlu_dist", 
-              fenicslog = "INFO", Tcvarmethod = "random";
+         phi_i = -1000.0, gamma_ei, gamma_hi, curr_i, RVO2_i, Vfrac_i, delV0 = 0.07/VUNIT, delV_i,
+         kry_abs_tol = 1e-7, kry_rel_tol = 1e-4;
+  std::string savemethod("fix"), linear_solver("superlu_dist"), preconditioner("hypre_euclid"),
+              Tcvarmethod("random");
+  enum LogLevel lglvl = INFO;
   std::vector<double> t_out;
 
   //----------------------------------------------------------------
@@ -280,8 +290,6 @@ int main()
   auto etas = std::make_shared<Constant>(1.0);
   auto mus = std::make_shared<Constant>(-1.0);
   auto deff = std::make_shared<Constant>(10e-9 / LUNIT);
-  // For Nitsche's trick dealing with nonstandard boundary conditions
-  auto nitsche_eps = std::make_shared<Constant>(alpha*(double(*Lx)/nx));
 
 
   //-----------------------------------------------------------
@@ -331,8 +339,12 @@ int main()
   readxml_bcast(max_iter, docroot, "solverparameters/Newtonmaxiteration", MPI_COMM_WORLD, rank);
   readxml_bcast(tol_tstep, docroot, "solverparameters/timesteptolerance", MPI_COMM_WORLD, rank);
   readxml_bcast(newton_abs_tol, docroot, "solverparameters/Newtonabsolutetolerance", MPI_COMM_WORLD, rank);
-  readxml_bcast(fenicslog, docroot, "solverparameters/loglevel", MPI_COMM_WORLD, rank);
-  readxml_bcast(directsolver, docroot, "solverparameters/directsolver", MPI_COMM_WORLD, rank);
+  readxml_bcast(lglvl, docroot, "solverparameters/loglevel", MPI_COMM_WORLD, rank);
+  readxml_bcast(linear_solver, docroot, "solverparameters/linearsolver", MPI_COMM_WORLD, rank);
+  readxml_bcast(preconditioner, docroot, "solverparameters/preconditioner", MPI_COMM_WORLD, rank);
+  readxml_bcast(kry_max_iter, docroot, "solverparameters/Krylovmaxiteration", MPI_COMM_WORLD, rank);
+  readxml_bcast(kry_abs_tol, docroot, "solverparameters/Krylovabsolutetolerance", MPI_COMM_WORLD, rank);
+  readxml_bcast(kry_rel_tol, docroot, "solverparameters/Krylovrelativetolerance", MPI_COMM_WORLD, rank);
   readxml_bcast(alpha, docroot, "solverparameters/Nitschefactor", MPI_COMM_WORLD, rank);
 
   if (savemethod == "fix")
@@ -360,6 +372,9 @@ int main()
   *delV = delV_i;  // Overloaded operator = for assignment
   curr_i = phi_i / RVO2_i / double(*Lz);
 
+  // For Nitsche's trick dealing with nonstandard boundary conditions
+  auto nitsche_eps = std::make_shared<Constant>(alpha*(double(*Lx)/nx));
+
   MPI_Barrier(MPI_COMM_WORLD);
 
   //std::cout << "Test node 0" << std::endl;
@@ -384,9 +399,9 @@ int main()
   //--------------------------------------------------------------
   // Create function spaces
   //--------------------------------------------------------------
-  auto V = std::make_shared<VO2_2tdevice::FunctionSpace>(mesh);
+  auto V = std::make_shared<imt::Form_F::TestSpace>(mesh);
   // Sub FunctionSpace for component of V
-  auto V1 = std::make_shared<VO2_2tdevice::CoefficientSpace_Tcvar>(mesh);
+  auto V1 = std::make_shared<imt::CoefficientSpace_Tcvar>(mesh);
 
   //std::cout << "Test node 2" << std::endl;
 
@@ -419,6 +434,9 @@ int main()
   _Tcvar.rename("Tcvar", "Tcvar");
   file_Tcvar << _Tcvar;
 
+  Function ca(V1);  // Charge accumulation
+  ca.rename("Charge accumulation", "Charge accumulation");
+
   // Assign initial conditions and initial guess to solutions
   InitialConditions u_i(eta_i, mu_i, gamma_ei, gamma_hi, phi_i, Ly, T_i, curr_i);
   *u_n = u_i;  // Overloaded operator = for assignment
@@ -429,22 +447,28 @@ int main()
   //--------------------------------------------------------------------------------
   // Create Forms and attach to them Coefficients, Constants and marked boundaries
   //--------------------------------------------------------------------------------
-  auto F = std::make_shared<VO2_2tdevice::ResidualForm>(V);
-  auto J = std::make_shared<VO2_2tdevice::JacobianForm>(V, V);
+  auto F = std::make_shared<imt::Form_F>(V);
+  auto J = std::make_shared<imt::Form_J>(V, V);
   // integral (s^2 * dx)
   // Seems those formal Forms like ResidualForm etc. don't have their own memory for their coefficients,
   // and the Functions have their pointer passed to the Forms when they are assigned to the Forms, so 
   // the Forms' coefficients will be automatically updated when the external coefficient Functions are
   // updated. But the Functional forms as below seems to have their own memory for their coefficients 
   // and one needs to reassign their coefficients explicitly.
-  VO2_2tdevice::Form_scalernorm scalernorm(mesh);
-  VO2_2tdevice::Form_phib0int phi0int(mesh);
-  VO2_2tdevice::Form_Tint Tint(mesh);
+  imt::Form_scalernorm scalernorm(mesh);
+  imt::Form_phib0int phi0int(mesh);
+  imt::Form_Tint Tint(mesh);
+  imt::Form_a a_ca(V1, V1);
+  imt::Form_L L_ca(V1);
+  Matrix A_ca;
+  Vector b_ca;
+  assemble(A_ca, a_ca);  
 
   // Attach marked boundaries for marking boundaries
   F->ds = marked_bdrs;
   J->ds = marked_bdrs;
   phi0int.ds = marked_bdrs;
+  L_ca.ds = marked_bdrs;
 
   // Collect Coefficients and Constants
   std::map<std::string, std::shared_ptr<const GenericFunction>> coefficients_J = 
@@ -463,11 +487,17 @@ int main()
   coefficients_F.insert({"Ts", Ts});
   coefficients_F.insert({"delV", delV});
 
+  std::map<std::string, std::shared_ptr<const GenericFunction>> coefficients_ca = {{"KB", KB}, 
+   {"ECHARGE", ECHARGE}, {"CHI", CHI}, {"NC", NC}, {"NV", NV}, {"MEC", MEC}, {"MEA", MEA}, 
+   {"MHC", MHC}, {"MHA", MHA}, {"u", u}};
+
 
   // Attach Coefficients to forms (initial conditions and guess included)
   F->set_coefficients(coefficients_F);
   // std::cout << J->coefficient_number("delV") << "/" << J->num_coefficients() << std::endl;  // Test
   J->set_coefficients(coefficients_J);
+
+  L_ca.set_coefficients(coefficients_ca);
 
   //std::cout << "Test node 5" << std::endl;
   //--------------------------------------------------------------------------------
@@ -477,12 +507,21 @@ int main()
   NonlinearVariationalSolver solver(problem);
 
   // Set solver parameters
-  solver.parameters("newton_solver")["linear_solver"] = directsolver;   // "superlu_dist", "mumps", "gmres", "bicgstab"
   solver.parameters("newton_solver")["relaxation_parameter"] = rel_par;
   solver.parameters("newton_solver")["maximum_iterations"] = max_iter;
   solver.parameters("newton_solver")["absolute_tolerance"] = newton_abs_tol;
   solver.parameters("newton_solver")["relative_tolerance"] = newton_rel_tol;
   solver.parameters("newton_solver")["error_on_nonconvergence"] = false;   // Not stop program if Newton solver does not converge
+
+  solver.parameters("newton_solver")["linear_solver"] = linear_solver; // "superlu_dist", "mumps", "gmres", "bicgstab"
+  if (linear_solver != "mumps" && linear_solver != "superlu_dist" && linear_solver != "pastix" 
+      && linear_solver != "petsc" && linear_solver != "superlu" && linear_solver != "umfpack")
+  {
+    solver.parameters("newton_solver")["preconditioner"] = preconditioner;
+    solver.parameters("newton_solver")("krylov_solver")["maximum_iterations"] = kry_max_iter;
+    solver.parameters("newton_solver")("krylov_solver")["absolute_tolerance"] = kry_abs_tol;
+    solver.parameters("newton_solver")("krylov_solver")["relative_tolerance"] = kry_rel_tol;
+  }
 
   // Test
   //double rerror = rel_err(u, u_n, etanorm, munorm, genorm, ghnorm, phinorm, Tnorm);
@@ -500,12 +539,13 @@ int main()
 
   File file_eta(figdir+"eta.pvd");
   File file_mu(figdir+"mu.pvd");
-  File file_ge(figdir+"gamma_e.pvd");
-  File file_gh(figdir+"gamma_h.pvd");
+  //File file_ge(figdir+"gamma_e.pvd");
+  //File file_gh(figdir+"gamma_h.pvd");
   File file_phi(figdir+"phi.pvd");
   File file_T(figdir+"T.pvd");
+  File file_ca(figdir+"ca.pvd");
   // Collect data files
-  std::vector<File*> files{&file_eta, &file_mu, &file_ge, &file_gh, &file_phi, &file_T};
+  std::vector<File*> files{&file_eta, &file_mu, &file_phi, &file_T, &file_ca};
 
   //save_sol(files, u, UNITS, 0.0);
 
@@ -515,43 +555,7 @@ int main()
   // Set output number format
   std::cout << std::scientific << std::setprecision(pnum);
   logfile << std::scientific << std::setprecision(pnum);
-
-  if (fenicslog == "DBG")
-  {
-    set_log_level(LogLevel::DBG);
-  }  
-  else if (fenicslog == "TRACE")
-  { 
-    set_log_level(LogLevel::TRACE);
-  }
-  else if (fenicslog == "PROGRESS")
-  {
-    set_log_level(LogLevel::PROGRESS);
-  }
-  else if (fenicslog == "INFO")
-  {
-    set_log_level(LogLevel::INFO);
-  }
-  else if (fenicslog == "WARNING")
-  {
-    set_log_level(LogLevel::WARNING);
-  }
-  else if (fenicslog == "ERROR")
-  {
-    set_log_level(LogLevel::ERROR);
-  }
-  else if (fenicslog == "CRITICAL")
-  {
-    set_log_level(LogLevel::CRITICAL);
-  }
-  else if (fenicslog == "FALSE")
-  {
-    set_log_level(false);
-  }
-  else
-  {
-    set_log_level(LogLevel::INFO);
-  }
+  set_log_level(lglvl);
 
   //----------------------------------------------------------------------------
   // Start solving the equations using adaptive time stepping
@@ -667,7 +671,12 @@ int main()
     n_step++;
     if (savemethod == "auto")
     {
-      if (n_step % lround(saveperiod) == 1) save_sol(files, u, UNITS, t+double(*dt));
+      if (n_step % lround(saveperiod) == 1) {
+        L_ca.u = u;
+        assemble(b_ca, L_ca);
+        solve(A_ca, *(ca.vector()), b_ca);  // Cast charge accumulation Function
+        save_sol(files, u, ca, UNITS, t+double(*dt));
+      }
     }
     else if (savemethod == "fix")
     {
@@ -678,7 +687,10 @@ int main()
         *(u_out->vector()) = *(u_n->vector());
         u_out->vector()->axpy((*it_out-t)/double(*dt), *(u->vector()));
         u_out->vector()->axpy(-(*it_out-t)/double(*dt), *(u_n->vector()));
-        save_sol(files, u_out, UNITS, *it_out);
+        L_ca.u = u_out;
+        assemble(b_ca, L_ca);
+        solve(A_ca, *(ca.vector()), b_ca);  // Cast charge accumulation Function
+        save_sol(files, u_out, ca, UNITS, *it_out);
         if (rank == 0)
         {
           std::cout << "User message ===> Out: " << it_out-t_out.begin() << ", t = " << *it_out << std::endl;

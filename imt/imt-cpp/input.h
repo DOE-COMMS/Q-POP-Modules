@@ -181,3 +181,46 @@ bool readxml_bcast(Constant& data, pugi::xml_node docroot, std::string path, con
     return true;
 }
 
+bool readxml_bcast(enum LogLevel& data, pugi::xml_node docroot, std::string path, const MPI_Comm& comm, int rank)
+{
+  std::string datastr;
+  enum LogLevel lglvl;
+
+  if (readxml_bcast(datastr, docroot, path, comm, rank))
+  {
+    if (datastr == "DBG")
+    {
+      data = DBG;
+    }  
+    else if (datastr == "TRACE")
+    { 
+      data = TRACE;
+    }
+    else if (datastr == "PROGRESS")
+    {
+      data = PROGRESS;
+    }
+    else if (datastr == "INFO")
+    {
+      data = INFO;
+    }
+    else if (datastr == "WARNING")
+    {
+      data = WARNING;
+    }
+    else if (datastr == "ERROR")
+    {
+      data = ERROR;
+    }
+    else if (datastr == "CRITICAL")
+    {
+      data = CRITICAL;
+    }
+  }
+  else
+  {
+    return false;
+  }
+
+  return true;
+}
