@@ -15,10 +15,12 @@ The core modules of Q-POP (**Q**uantum **P**hase-field **O**open-source **P**ack
     ├── imt-cpp
     │   ├── input.h
     │   ├── main.cpp
-    │   └── VO2_2tdevice.ufl
+    │   ├── imt.ufl
+    │   ├── imt.h
+    │   └── imt.cpp
     └── imt-py
         ├── VO2_GSBlockATP.py
-        └── VO2_Nit_EfficAdap.py
+        └── qpop-imt.py
 ```
 
 ## Q-POP-IMT
@@ -34,11 +36,11 @@ make
 ```
 The program supports parallel computing. To run the compiled executable on, say, 8 processors, run the below command in your desired directory:
 ```
-mpirun -np 8 directory-to-executable/VO2_2tdevice
+mpirun -np 8 directory-to-executable/qpop-imt
 ```
 Alternatively, one can use the Python interface of the module without any compilation (requires the Python interface of FEniCS to be installed):
 ```
-mpirun -np 8 python directory-to-python-script/VO2_Nit_EfficAdap.py
+mpirun -np 8 python directory-to-python-script/qpop-imt.py
 ```
 The program requires an input file for specifying parameters; see following section for details. The output files will be generated in the current directory.
 
