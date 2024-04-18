@@ -1,4 +1,9 @@
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/DOE-COMMS/Q-POP-Modules/total)
+![GitHub release version](https://img.shields.io/github/v/release/DOE-COMMS/Q-POP-Modules?color=%2350C878&include_prereleases)
+![License](https://img.shields.io/github/license/DOE-COMMS/Q-POP-Modules)
+![GitHub Size](https://img.shields.io/github/repo-size/DOE-COMMS/Q-POP-Modules)
+![HitCount](https://hits.dwyl.com/DOE-COMMS/Q-POP-Modules.svg?style=flat-square&show=unique)
+![HitCount](https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2FDOE-COMMS%2FQ-POP-Modules.json&label=total%20hits&color=pink)
 
 # Q-POP modules
 The core modules of Q-POP (**Q**uantum **P**hase-field **O**open-source **P**ackage) aim to deliver flexible, scalable, and extendable phase-field solvers that will enable researchers to study quantum materials and phase transitions with ease. The software will be made open-source in three stages, with new physics capabilities added with release. The module for insulator-metal transitions (Q-POP-IMT) was the first to be released in April 2024. The superconductor and the dynamical phase-field modules will follow soon.
