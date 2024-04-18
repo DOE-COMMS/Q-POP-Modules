@@ -20,7 +20,7 @@
 # to a direct voltage source with a resistor in series. Considered the 
 # parasitic capacitance of the circuit.
 #
-# Compile this form with FFC: ffc -l dolfin -O -f split VO2_2tdevice.ufl
+# Compile this form with FFC: ffc -l dolfin -O -f split <file-name>
 
 #----------------------------------------------------------------
 # Define finite element and solution functions
