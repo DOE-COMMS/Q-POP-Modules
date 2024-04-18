@@ -10,7 +10,7 @@ The core modules of Q-POP (**Q**uantum **P**hase-field **O**open-source **P**ack
 
 ## Folder structure
 ```sh
-├── core
+├── stash
 ├── external
 │   └── pugixml
 │       ├── pugiconfig.hpp
