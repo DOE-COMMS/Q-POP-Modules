@@ -17,40 +17,24 @@ The core modules of Q-POP (**Q**uantum **P**hase-field **O**open-source **P**ack
 │       ├── pugixml.cpp
 │       └── pugixml.hpp
 └── imt
-    ├── imt-cpp
-    │   ├── input.h
-    │   ├── main.cpp
-    │   ├── imt.ufl
-    │   ├── imt.h
-    │   └── imt.cpp
-    ├── imt-py
-    │   ├── VO2_GSBlockATP.py
-    │   └── qpop-imt.py
+    ├── VO2_GSBlockATP.py
+    ├── qpop-imt.py
     └── examples
         └── input.xml
 ```
 
 ## Q-POP-IMT
-This module is an open-source package for simulating mesoscale, nonequilibrium, inhomogeneous processes of insulator-metal phase transitions and their associated electrical and structural responses.
+This module is an open-source phase-field package for simulating mesoscale, nonequilibrium, inhomogeneous processes of insulator-metal phase transitions and their associated electrical and structural responses.
 
 ### Setup development environment
-This module uses FEniCS C++ library and its Python interface for defining and solving finite-element partial differential equations. FEniCS C++ library and its Python interface of version 2019.1.0.post0 must be installed. Note that this version of FEniCS is compatible only with openMPI v3.1 or older versions, because openMPI after v3.1 has undergone some major API updates.
+This module uses FEniCS C++ library and its Python interface for defining and solving finite-element partial differential equations, capable of exascale simulations. FEniCS C++ library and its Python interface of version 2019.1.0.post0 must be installed. Note that this version of FEniCS is compatible only with openMPI v3.1 or older versions, because openMPI after v3.1 has undergone some major API updates.
 
-### How to build and run the program
-The program supports parallel computing. One can run the Python interface of the module without any compilation (recommended). To run it on, say, 8 processors, run the below command in your desired directory:
+### How to run the program
+The program supports parallel computing. One can run the Python interface of the module without any compilation. To run it on, say, 8 processors, run the below command in your desired directory:
 ```
 mpirun -np 8 python directory-to-python-script/qpop-imt.py
 ```
-Alternatively, one can use cmake to build the executable for the C++ version. To do this, simply create a build directory in the root directory of the package and enter it, then run the following: 
-```
-cmake ..
-make
-```
-Then run the compiled executable in your desired directory:
-```
-mpirun -np 8 directory-to-executable/qpop-imt
-```
-The program requires an input file for specifying parameters; see the following section for details. The output files will be generated in the current directory.
+The program requires an input file for specifying parameters. The output files will be generated in the current directory.
 
 ### Input file
 Users can provide various parameters in the `input.xml` file to control the simulation. There are several sections in `input.xml`:
@@ -62,15 +46,24 @@ Section            | Explanation
 `initialization`   | Parameters for initialization, e.g., initial temperature
 `solverparameters` | Parameters for finite-element solver, e.g., linear solver choice
 
-Currently, the program considers one structural order parameter $\eta$ and one electronic order parameter $\psi$, and the Landau potential has the form $f_L=[a_1(T-T_1)/(2T_c)]\eta^2 + (a_2/4)\eta^4 + (a_3/6)\eta^6 + [b_1(T-T_2)/(2T_c)]\psi^2 + (b_2/4)\psi^4 + (b_3/6)\psi^6 + c_1\eta\psi - (c_2/2)\eta^2\psi^2 + (c_3/2)\eta^3\psi$. The Landau coefficients can be input in the `internal` section like
+Currently, the program considers one structural order parameter $\eta$ and one electronic order parameter $\psi$, and the Landau potential has the form 
+```math
+\begin{aligned}
+f_L=& \frac{a_1(T-T_1)}{2T_c}\eta^2 + \frac{a_2}{4}\eta^4 + \frac{a_3}{6}\eta^6  \\
+    & + \frac{b_1(T-T_2)}{2T_c}\psi^2 + \frac{b_2}{4}\psi^4 + \frac{b_3}{6}\psi^6  \\
+    & + c_1\eta\psi - \frac{c_2}{2}\eta^2\psi^2 + \frac{c_3}{2}\eta^3\psi .
+\end{aligned}
+```
+The energy gap form is approximated by the symmetry-allowed lowest order term on the electronic order parameter, $E_g = E_{g0}\psi^2$, where $E_{g0}$ is the gap coefficient. The detail of the phase-field model of insulator-metal transitions can be found in [Y. Shi and L.-Q. Chen, 2019](https://doi.org/10.1103/PhysRevApplied.11.014059 "Current-Driven Insulator-To-Metal Transition in Strongly Correlated VO2"). The Landau coefficients, gap coefficient, etc., can be input in the `internal` section like
 ```
 <internal>
  <a1 unit='kBTc/f.u.'>1.0</a1>
  <T1 unit='K'>200.0</T1>
+ <gapcoeff unit='eV'>0.5</gapcoeff>
  ...
 </internal>
 ```
-The unit is fixed in the program and here it is only to remind the user. If the internal parameters are not explicitly specified, the program will fall back to the case of VO<sub>2</sub>, a prototypical strongly correlated material exhibiting an insulator-metal transition near room temperature.
+The units are fixed in the program and here they are only to remind the users. If the internal parameters are not explicitly specified, the program will fall back to the case of VO<sub>2</sub>, a prototypical strongly correlated material exhibiting an insulator-metal transition near room temperature.
 
 The example below simulates a rectangular VO<sub>2</sub> device, supplied with a direct voltage through a series resistor.
 ```
