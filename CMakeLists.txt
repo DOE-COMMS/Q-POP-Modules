@@ -6,4 +6,4 @@ project(
   LANGUAGES C CXX Fortran)
 
 #add_subdirectory(external)
-add_subdirectory(imt)
+add_subdirectory(stash)

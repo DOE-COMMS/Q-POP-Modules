@@ -218,21 +218,29 @@ int main()
   const double CUNIT = EUNIT/VUNIT;
   const double MUNIT = EUNIT*pow(TUNIT/LUNIT, 2);
   const double RUNIT = VUNIT/(CUNIT/TUNIT);
-  const double UCVOL = 59e-30/pow(LUNIT, 3);
   const double UNITS[6] = {1.0, 1.0, 1.0, 1.0, VUNIT, TEMPUNIT}; // Collect units for the 6 solution Functions
 
+  if (!doc.load_file("input.xml")) 
+  {
+    std::cout << "Error: Cannot load file input.xml" << std::endl;
+    return -1;
+  }
+  docroot = doc.child("input");
   //----------------------------------------------------------------
   // Define computational parameter Constant
   //----------------------------------------------------------------
   auto dt = std::make_shared<Constant>(1e-6);
   auto Lx = std::make_shared<Constant>(50e-9/LUNIT);
+  readxml_bcast(*Lx, docroot, "external/Lx", MPI_COMM_WORLD, rank, LUNIT/1e-9);
   auto Lz = std::make_shared<Constant>(36e-9/LUNIT);
+  readxml_bcast(*Lz, docroot, "external/Lz", MPI_COMM_WORLD, rank, LUNIT/1e-9);
   
   //----------------------------------------------------------------
   // Define physical property parameter Constant
   //----------------------------------------------------------------
   auto KB = std::make_shared<Constant>(1.3806504e-23/EUNIT*TEMPUNIT);
   auto ECHARGE = std::make_shared<Constant>(1.602176487e-19/CUNIT);
+  const double UCVOL = 59e-30/pow(LUNIT, 3);
   auto TC = std::make_shared<Constant>(338.0/TEMPUNIT);
   auto T1 =  std::make_shared<Constant>(275.0/TEMPUNIT);   // 0.81361
   auto AN1 = std::make_shared<Constant>(2.05714*double(*KB)*double(*TC)/UCVOL);  // 34.867
@@ -246,6 +254,7 @@ int main()
   auto GNU2 = std::make_shared<Constant>((0.2 - 1.5 + 0.3/2)/2*double(*KB)*double(*TC)/UCVOL);
   auto GNU3 = std::make_shared<Constant>((0.05 + 2.0)/2*double(*KB)*double(*TC)/UCVOL);
   auto CHI = std::make_shared<Constant>(0.286*1.602176487e-19/EUNIT);
+  readxml_bcast(*CHI, docroot, "internal/gapcoeff", MPI_COMM_WORLD, rank, EUNIT/1.602176487e-19);
   auto KN = std::make_shared<Constant>(1.0/((1e-12/TUNIT)*double(*AN1)*(double(*TC)-double(*T1))/double(*TC)));
   auto KAPPAN = std::make_shared<Constant>(1.0*(1.602176487e-19/1e-9)/EUNIT*LUNIT);
   auto KU = std::make_shared<Constant>(1.0/((10e-15/TUNIT)*double(*CHI)*2*(0.16/UCVOL)));
@@ -257,16 +266,24 @@ int main()
   auto MHC = std::make_shared<Constant>(double(*MEC)/1.2);
   auto MHA = std::make_shared<Constant>(double(*MHC)*0.5);
   auto KEH0 = std::make_shared<Constant>(1.0/( 2 * sqrt(double(*NC)*double(*NV))*exp(-double(*CHI)*pow(0.827987, 2)/(double(*KB)*322.0/TEMPUNIT)) * (14.235e-6/TUNIT) ));
+  readxml_bcast(*KEH0, docroot, "internal/ehrecrate", MPI_COMM_WORLD, rank, pow(LUNIT, 3)/TUNIT/(UCVOL/1e-9));
   auto PERMITTIVITY = std::make_shared<Constant>(60*(8.854187817e-12*VUNIT/CUNIT*LUNIT));
   auto CPV = std::make_shared<Constant>(690*4340/EUNIT*pow(LUNIT, 3)*TEMPUNIT);
   auto THETA = std::make_shared<Constant>(6/EUNIT*TUNIT*LUNIT*TEMPUNIT);
   auto HTRAN = std::make_shared<Constant>(3e6/EUNIT*TUNIT*pow(LUNIT, 2)*TEMPUNIT);
+  readxml_bcast(*HTRAN, docroot, "external/heatdiss", MPI_COMM_WORLD, rank, EUNIT/(TUNIT*pow(LUNIT, 2)*TEMPUNIT));
   auto CHP_IN = std::make_shared<Constant>(0.0);   // Intrinsic chemical potential
   
   //----------------------------------------------------------------
   // Define computational parameters
   //----------------------------------------------------------------
   int nx = 50, ny = 20, max_div = 100, max_iter = 30, rseed = 11793, kry_max_iter = 1000;
+  readxml_bcast(nx, docroot, "external/Lx.mesh", MPI_COMM_WORLD, rank);
+  readxml_bcast(ny, docroot, "external/Ly.mesh", MPI_COMM_WORLD, rank);
+  readxml_bcast(rseed, docroot, "initialization/Tcvariance/randomseed", MPI_COMM_WORLD, rank);
+  readxml_bcast(max_iter, docroot, "solverparameters/Newtonmaxiteration", MPI_COMM_WORLD, rank);
+  readxml_bcast(kry_max_iter, docroot, "solverparameters/Krylovmaxiteration", MPI_COMM_WORLD, rank);
+
   double Ly = 20e-9/LUNIT, tf = 5000e-9/TUNIT, saveperiod = 5.0, alpha = 1e-6, 
          tol_tstep = 0.01, r_t_max = 4.0, r_t_min = 0.2, s_t = 0.9,
          rel_par = 0.9, newton_abs_tol = 1e-6, newton_rel_tol = 1e-3, 
@@ -275,77 +292,53 @@ int main()
          bump = 0.02, T_i = 300.0/TEMPUNIT, eta_i = 0.791296*sqrt(2), mu_i = -0.914352*sqrt(2),
          phi_i = -1000.0, gamma_ei, gamma_hi, curr_i, RVO2_i, Vfrac_i, delV0 = 0.07/VUNIT, delV_i,
          kry_abs_tol = 1e-7, kry_rel_tol = 1e-4;
-  std::string savemethod("fix"), linear_solver("superlu_dist"), preconditioner("hypre_euclid"),
-              Tcvarmethod("random");
-  enum LogLevel lglvl = INFO;
-  std::vector<double> t_out;
-
-  //----------------------------------------------------------------
-  // Define boundary and initial condition parameter Constant
-  //----------------------------------------------------------------
-  auto Ts = std::make_shared<Constant>(300.0 / TEMPUNIT);
-  auto delV = std::make_shared<Constant>(delV0);                  // V
-  auto Resistor = std::make_shared<Constant>(8.0e3 / RUNIT);  // Ohm / [Chosen resistance unit]
-  auto Capacitor = std::make_shared<Constant>(1e-9 / (CUNIT/VUNIT));
-  auto etas = std::make_shared<Constant>(1.0);
-  auto mus = std::make_shared<Constant>(-1.0);
-  auto deff = std::make_shared<Constant>(10e-9 / LUNIT);
-
-
-  //-----------------------------------------------------------
-  // Read input parameters
-  //-----------------------------------------------------------  
-  if (!doc.load_file("input.xml")) 
-  {
-    std::cout << "Error: Cannot load file input.xml" << std::endl;
-    return -1;
-  }
-  docroot = doc.child("input");
-
-  readxml_bcast(*Ts, docroot, "external/temperature", MPI_COMM_WORLD, rank, TEMPUNIT);
-  readxml_bcast(delV0, docroot, "external/voltage", MPI_COMM_WORLD, rank, VUNIT);
-  readxml_bcast(*Resistor, docroot, "external/resistor", MPI_COMM_WORLD, rank, RUNIT);
-  readxml_bcast(*Capacitor, docroot, "external/capacitor", MPI_COMM_WORLD, rank, CUNIT/VUNIT/1e-9);
-  readxml_bcast(*HTRAN, docroot, "external/heatdiss", MPI_COMM_WORLD, rank, EUNIT/(TUNIT*pow(LUNIT, 2)*TEMPUNIT));
-  readxml_bcast(*Lx, docroot, "external/Lx", MPI_COMM_WORLD, rank, LUNIT/1e-9);
-  readxml_bcast(nx, docroot, "external/Lx.mesh", MPI_COMM_WORLD, rank);
   readxml_bcast(Ly, docroot, "external/Ly", MPI_COMM_WORLD, rank, LUNIT/1e-9);
-  readxml_bcast(ny, docroot, "external/Ly.mesh", MPI_COMM_WORLD, rank);
-  readxml_bcast(*Lz, docroot, "external/Lz", MPI_COMM_WORLD, rank, LUNIT/1e-9);
-
   readxml_bcast(tf, docroot, "time/endtime", MPI_COMM_WORLD, rank, TUNIT/1e-9);
-  readxml_bcast(savemethod, docroot, "time/savemethod", MPI_COMM_WORLD, rank);
+  readxml_bcast(delV0, docroot, "external/voltage", MPI_COMM_WORLD, rank, VUNIT);
   readxml_bcast(saveperiod, docroot, "time/saveperiod", MPI_COMM_WORLD, rank);
   readxml_bcast(tramp, docroot, "time/rampt", MPI_COMM_WORLD, rank, TUNIT/1e-9);
-
-  readxml_bcast(*CHI, docroot, "internal/gap", MPI_COMM_WORLD, rank, EUNIT/1.602176487e-19);
-  readxml_bcast(*KEH0, docroot, "internal/ehrecrate", MPI_COMM_WORLD, rank, pow(LUNIT, 3)/TUNIT/(UCVOL/1e-9));
-
   readxml_bcast(T_i, docroot, "initialization/temperature", MPI_COMM_WORLD, rank, TEMPUNIT);
   readxml_bcast(eta_i, docroot, "initialization/SOP", MPI_COMM_WORLD, rank);
   readxml_bcast(mu_i, docroot, "initialization/EOP", MPI_COMM_WORLD, rank);
   readxml_bcast(phi_i, docroot, "initialization/voltage", MPI_COMM_WORLD, rank, VUNIT);
-  readxml_bcast(Tcvarmethod, docroot, "initialization/Tcvariance.method", MPI_COMM_WORLD, rank);
-  readxml_bcast(rseed, docroot, "initialization/Tcvariance/randomseed", MPI_COMM_WORLD, rank);
   readxml_bcast(sigma, docroot, "initialization/Tcvariance/sigma", MPI_COMM_WORLD, rank, TEMPUNIT);
   readxml_bcast(corr_len, docroot, "initialization/Tcvariance/correlationlength", MPI_COMM_WORLD, rank, LUNIT/1e-9);
   readxml_bcast(Tcvar0, docroot, "initialization/Tcvariance/mean", MPI_COMM_WORLD, rank, TEMPUNIT);
   readxml_bcast(TCIMP0, docroot, "initialization/Tcvariance/Tcshift", MPI_COMM_WORLD, rank, TEMPUNIT);
   readxml_bcast(RIMPDIS, docroot, "initialization/Tcvariance/radius", MPI_COMM_WORLD, rank, LUNIT/1e-9);
   readxml_bcast(bump, docroot, "initialization/Tcvariance/bump", MPI_COMM_WORLD, rank);
-
   readxml_bcast(newton_rel_tol, docroot, "solverparameters/Newtonrelativetolerance", MPI_COMM_WORLD, rank);
   readxml_bcast(rel_par, docroot, "solverparameters/Newtonrelaxation", MPI_COMM_WORLD, rank);
-  readxml_bcast(max_iter, docroot, "solverparameters/Newtonmaxiteration", MPI_COMM_WORLD, rank);
   readxml_bcast(tol_tstep, docroot, "solverparameters/timesteptolerance", MPI_COMM_WORLD, rank);
   readxml_bcast(newton_abs_tol, docroot, "solverparameters/Newtonabsolutetolerance", MPI_COMM_WORLD, rank);
-  readxml_bcast(lglvl, docroot, "solverparameters/loglevel", MPI_COMM_WORLD, rank);
-  readxml_bcast(linear_solver, docroot, "solverparameters/linearsolver", MPI_COMM_WORLD, rank);
-  readxml_bcast(preconditioner, docroot, "solverparameters/preconditioner", MPI_COMM_WORLD, rank);
-  readxml_bcast(kry_max_iter, docroot, "solverparameters/Krylovmaxiteration", MPI_COMM_WORLD, rank);
   readxml_bcast(kry_abs_tol, docroot, "solverparameters/Krylovabsolutetolerance", MPI_COMM_WORLD, rank);
   readxml_bcast(kry_rel_tol, docroot, "solverparameters/Krylovrelativetolerance", MPI_COMM_WORLD, rank);
   readxml_bcast(alpha, docroot, "solverparameters/Nitschefactor", MPI_COMM_WORLD, rank);
+
+  std::string savemethod("fix"), linear_solver("superlu_dist"), preconditioner("hypre_euclid"),
+              Tcvarmethod("random");
+  readxml_bcast(savemethod, docroot, "time/savemethod", MPI_COMM_WORLD, rank);
+  readxml_bcast(Tcvarmethod, docroot, "initialization/Tcvariance.method", MPI_COMM_WORLD, rank);
+  readxml_bcast(linear_solver, docroot, "solverparameters/linearsolver", MPI_COMM_WORLD, rank);
+  readxml_bcast(preconditioner, docroot, "solverparameters/preconditioner", MPI_COMM_WORLD, rank);
+
+  enum LogLevel lglvl = INFO;
+  readxml_bcast(lglvl, docroot, "solverparameters/loglevel", MPI_COMM_WORLD, rank);
+  std::vector<double> t_out;
+
+  //----------------------------------------------------------------
+  // Define boundary and initial condition parameter Constant
+  //----------------------------------------------------------------
+  auto Ts = std::make_shared<Constant>(300.0 / TEMPUNIT);
+  readxml_bcast(*Ts, docroot, "external/temperature", MPI_COMM_WORLD, rank, TEMPUNIT);
+  auto delV = std::make_shared<Constant>(delV0);                  // V
+  auto Resistor = std::make_shared<Constant>(8.0e3 / RUNIT);  // Ohm / [Chosen resistance unit]
+  readxml_bcast(*Resistor, docroot, "external/resistor", MPI_COMM_WORLD, rank, RUNIT);
+  auto Capacitor = std::make_shared<Constant>(1e-9 / (CUNIT/VUNIT));
+  readxml_bcast(*Capacitor, docroot, "external/capacitor", MPI_COMM_WORLD, rank, CUNIT/VUNIT/1e-9);
+  auto etas = std::make_shared<Constant>(1.0);
+  auto mus = std::make_shared<Constant>(-1.0);
+  auto deff = std::make_shared<Constant>(10e-9 / LUNIT);
 
   if (savemethod == "fix")
   {

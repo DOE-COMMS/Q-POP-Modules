@@ -1,13 +1,3 @@
-'''
-Note: VO2 phase transition simulation 
-Efficient adaptive time stepping based on time integration error control;
-Fully implicit scheme; 
-Nitsche's trick for special BCs;
-P1 element for variables
-Result: this version leads to correct phase transition
-Newton solver, linear solver: direct parallel solver mumps 
-'''
-
 from __future__ import print_function
 from fenics import *
 import math
@@ -134,28 +124,40 @@ VUNIT = 1e-3
 CUNIT = EUNIT/VUNIT
 MUNIT = EUNIT*(TUNIT/LUNIT)**2
 RUNIT = VUNIT/(CUNIT/TUNIT)
-UCVOL = 59e-30/LUNIT**3
 
+
+intree = ET.parse('input.xml')
+inroot = intree.getroot()
 #-----------------------------------------------
-# Define default parameters for geometry and time
+# Define parameters for geometry and time
 #-----------------------------------------------
 Lx = PhysParam(50e-9/LUNIT)
+Lx.read(inroot, 'external/Lx', unit=LUNIT/1e-9, comm=comm, rank=rank)
 Ly = PhysParam(20e-9/LUNIT)
+Ly.read(inroot, 'external/Ly', unit=LUNIT/1e-9, comm=comm, rank=rank)
 nx = Parameter(50)   # 96
+nx.read(inroot, 'external/Lx.mesh', comm=comm, rank=rank)
 ny = Parameter(20)   # 32
+ny.read(inroot, 'external/Ly.mesh', comm=comm, rank=rank)
 Lz = PhysParam(36e-9/LUNIT)
+Lz.read(inroot, 'external/Lz', unit=LUNIT/1e-9, comm=comm, rank=rank)
 
 tf = Parameter(5000e-9/TUNIT)         # Final time in nanoseconds  5000.0
+tf.read(inroot, 'time/endtime', unit=TUNIT/1e-9, comm=comm, rank=rank)
 dt = PhysParam(1e-6)       # Initial time step
 savemethod = Parameter('fix')  # or 'auto'
+savemethod.read(inroot, 'time/savemethod', comm=comm, rank=rank)
 saveperiod = Parameter(5.0)
+saveperiod.read(inroot, 'time/saveperiod', comm=comm, rank=rank)
 t_out = np.arange(0, tf.value+1e-12*tf.value, saveperiod.value) # np.linspace(0, tf, 201)  # Output time sequence
 len_t_out = len(t_out)
 
 alpha = Parameter(1e-6) #epsilon = alpha * h
+alpha.read(inroot, 'solverparameters/Nitschefactor', comm=comm, rank=rank)
 
 #adaptive time stepping parameters
 tol_tstep = Parameter(0.01)  # Goal relative error for time-stepping
+tol_tstep.read(inroot, 'solverparameters/timesteptolerance', comm=comm, rank=rank)
 r_t_max = Parameter(4.0)   # 5.0
 r_t_min = Parameter(0.2)
 s_t = Parameter(0.9)
@@ -163,10 +165,14 @@ max_div = Parameter(100)  # Allowed maximum number of successive divergence
 
 #newton solver parameters
 rel_par = Parameter(0.9)
+rel_par.read(inroot, 'solverparameters/Newtonrelaxation', comm=comm, rank=rank)
 max_iter = Parameter(30)
+max_iter.read(inroot, 'solverparameters/Newtonmaxiteration', comm=comm, rank=rank)
 # kr_solver_iter = 2000
 newton_abs_tol = Parameter(1e-6)
+newton_abs_tol.read(inroot, 'solverparameters/Newtonabsolutetolerance', comm=comm, rank=rank)
 newton_rel_tol = Parameter(1e-3)   #  1E-2
+newton_rel_tol.read(inroot, 'solverparameters/Newtonrelativetolerance', comm=comm, rank=rank)
 
 #not tuned parameters
 # num_steps = 1000     # Number of time steps
@@ -175,42 +181,79 @@ newton_rel_tol = Parameter(1e-3)   #  1E-2
 # tol = 1E-14   # Tolerance for geometry identifying
 
 directsolver = Parameter('superlu_dist')
+directsolver.read(inroot, 'solverparameters/directsolver', comm=comm, rank=rank)
 fenicslog = Parameter('INFO')
+fenicslog.read(inroot, 'solverparameters/loglevel', comm=comm, rank=rank)
 
 #-------------------------------------------
 # Define physical parameters
 #-------------------------------------------
 KB = PhysParam(1.3806504e-23/EUNIT*TEMPUNIT)
 ECHARGE = PhysParam(1.602176487e-19/CUNIT)
+UCVOL = PhysParam(59e-30/LUNIT**3)
+UCVOL.read(inroot, 'internal/unitcellvol', unit=LUNIT**3/1e-27, comm=comm, rank=rank)
 TC = PhysParam(338.0/TEMPUNIT)
+TC.read(inroot, 'internal/Tc', unit=TEMPUNIT, comm=comm, rank=rank)
 T1 =  PhysParam(275.0/TEMPUNIT)   # 0.81361
-AN1 = PhysParam(2.05714*KB.value*TC.value/UCVOL)  # 34.867
-AN2 = PhysParam((-0.623108 + 0.121228)/2*KB.value*TC.value/UCVOL)
-AN3 = PhysParam((0.330568 + 4.18947)/4*KB.value*TC.value/UCVOL)
+T1.read(inroot, 'internal/T1', unit=TEMPUNIT, comm=comm, rank=rank)
+AN1 = PhysParam(2.05714*KB.value*TC.value/UCVOL.value)  # 34.867
+AN1.read(inroot, 'internal/a1', unit=UCVOL.value/(KB.value*TC.value), comm=comm, rank=rank)
+AN2 = PhysParam((-0.623108 + 0.121228)/2*KB.value*TC.value/UCVOL.value)
+AN2.read(inroot, 'internal/a2', unit=UCVOL.value/(KB.value*TC.value), comm=comm, rank=rank)
+AN3 = PhysParam((0.330568 + 4.18947)/4*KB.value*TC.value/UCVOL.value)
+AN3.read(inroot, 'internal/a3', unit=UCVOL.value/(KB.value*TC.value), comm=comm, rank=rank)
 T2 = PhysParam(270.0/TEMPUNIT)
-AU1 = PhysParam(3.94286*KB.value*TC.value/UCVOL)
-AU2 = PhysParam((1.36767 - 3.67915)/2*KB.value*TC.value/UCVOL)
-AU3 = PhysParam((0.4 + 2)/4*KB.value*TC.value/UCVOL)
-GNU1 = PhysParam(0.3*KB.value*TC.value/UCVOL)
-GNU2 = PhysParam((0.2 - 1.5 + 0.3/2)/2*KB.value*TC.value/UCVOL)
-GNU3 = PhysParam((0.05 + 2.0)/2*KB.value*TC.value/UCVOL)
+T2.read(inroot, 'internal/T2', unit=TEMPUNIT, comm=comm, rank=rank)
+AU1 = PhysParam(3.94286*KB.value*TC.value/UCVOL.value)
+AU1.read(inroot, 'internal/b1', unit=UCVOL.value/(KB.value*TC.value), comm=comm, rank=rank)
+AU2 = PhysParam((1.36767 - 3.67915)/2*KB.value*TC.value/UCVOL.value)
+AU2.read(inroot, 'internal/b2', unit=UCVOL.value/(KB.value*TC.value), comm=comm, rank=rank)
+AU3 = PhysParam((0.4 + 2)/4*KB.value*TC.value/UCVOL.value)
+AU3.read(inroot, 'internal/b3', unit=UCVOL.value/(KB.value*TC.value), comm=comm, rank=rank)
+GNU1 = PhysParam(0.3*KB.value*TC.value/UCVOL.value)
+GNU1.read(inroot, 'internal/c1', unit=UCVOL.value/(KB.value*TC.value), comm=comm, rank=rank)
+GNU2 = PhysParam((0.2 - 1.5 + 0.3/2)/2*KB.value*TC.value/UCVOL.value)
+GNU2.read(inroot, 'internal/c2', unit=UCVOL.value/(KB.value*TC.value), comm=comm, rank=rank)
+GNU3 = PhysParam((0.05 + 2.0)/2*KB.value*TC.value/UCVOL.value)
+GNU3.read(inroot, 'internal/c3', unit=UCVOL.value/(KB.value*TC.value), comm=comm, rank=rank)
 CHI = PhysParam(0.286*1.602176487e-19/EUNIT)
-KN = PhysParam(1.0/((1e-12/TUNIT)*AN1.value*(TC.value-T1.value)/TC.value))
+CHI.read(inroot, 'internal/gapcoeff', unit=EUNIT/1.602176487e-19, comm=comm, rank=rank)
+tau_latt = PhysParam(1e-12/TUNIT)
+tau_latt.read(inroot, 'internal/SPTtimeconst', unit=TUNIT/1e-9, comm=comm, rank=rank)
+KN = PhysParam(1.0/(tau_latt.value*AN1.value*(TC.value-T1.value)/TC.value))
 KAPPAN = PhysParam(1.0*(1.602176487e-19/1E-9)/EUNIT*LUNIT)
-KU = PhysParam(1.0/((10e-15/TUNIT)*CHI.value*2*(0.16/UCVOL)))
+KAPPAN.read(inroot, 'internal/SOPgradcoeff', unit=(EUNIT/1.602176487e-19)/(LUNIT/1E-9), comm=comm, rank=rank)
+tau_elec = PhysParam(10e-15/TUNIT)
+tau_elec.read(inroot, 'internal/IMTtimeconst', unit=TUNIT/1e-9, comm=comm, rank=rank)
+nexcite = PhysParam(0.16/UCVOL.value)    # Density of excited electrons to close the gap
+nexcite.read(inroot, 'internal/IMTtimeconst.excitdensity', unit=UCVOL.value, comm=comm, rank=rank)
+KU = PhysParam(1.0/(tau_elec.value*CHI.value*2*nexcite.value))
 KAPPAU = PhysParam(1.0*(1.602176487e-19/1E-9)/EUNIT*LUNIT)
+KAPPAU.read(inroot, 'internal/EOPgradcoeff', unit=(EUNIT/1.602176487e-19)/(LUNIT/1E-9), comm=comm, rank=rank)
 NC = PhysParam(2*( 65*(9.10938215e-31/MUNIT) * KB.value*TC.value / (2*math.pi * (1.054571628e-34/EUNIT/TUNIT)**2) )**1.5)
+NC.read(inroot, 'internal/conductbandeffDOS', unit=UCVOL.value, comm=comm, rank=rank)
 NV = PhysParam(NC.value)
+NC.read(inroot, 'internal/valencebandeffDOS', unit=UCVOL.value, comm=comm, rank=rank)
 
 MEC = PhysParam(5e-5/LUNIT**2*VUNIT*TUNIT)
+MEC.read(inroot, 'internal/elecmobility1', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
 MEA = PhysParam(MEC.value*0.5)
+MEA.read(inroot, 'internal/elecmobility2', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
 MHC = PhysParam(MEC.value/1.2)
+MHC.read(inroot, 'internal/holemobility1', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
 MHA = PhysParam(MHC.value*0.5)
+MHA.read(inroot, 'internal/holemobility2', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
 KEH0 = PhysParam(1.0/( 2 * math.sqrt(NC.value*NV.value)*math.exp(-CHI.value*0.827987**2/(KB.value*322.0/TEMPUNIT)) * (14.235e-6/TUNIT) ))  # 1.0/( 2 * math.sqrt(NC*NV)*math.exp(-CHI/(2*KB*TC)) * (14e-6/TUNIT) )
-PERMITTIVITY = PhysParam(60*(8.854187817e-12*VUNIT/CUNIT*LUNIT))
+KEH0.read(inroot, 'internal/ehrecrate', unit=LUNIT**3/TUNIT/(UCVOL.value/1e-9), comm=comm, rank=rank)
+rel_perm = PhysParam(60.0)
+rel_perm.read(inroot, 'internal/relativepermitt', comm=comm, rank=rank)
+PERMITTIVITY = PhysParam(rel_perm.value*(8.854187817e-12*VUNIT/CUNIT*LUNIT))
 CPV = PhysParam(690*4340/EUNIT*LUNIT**3*TEMPUNIT)
+CPV.read(inroot, 'internal/volheatcapacity', unit=EUNIT/(TEMPUNIT*LUNIT**3), comm=comm, rank=rank)
 THETA = PhysParam(6/EUNIT*TUNIT*LUNIT*TEMPUNIT)
+THETA.read(inroot, 'internal/heatconduct', unit=EUNIT/(TUNIT*LUNIT*TEMPUNIT), comm=comm, rank=rank)
 HTRAN = PhysParam(3e6/EUNIT*TUNIT*LUNIT**2*TEMPUNIT)
+HTRAN.read(inroot, 'external/heatdiss', unit=EUNIT/(TUNIT*LUNIT**2*TEMPUNIT), comm=comm, rank=rank)
 # ETA_IN = 0
 # MU_IN = 0
 # ETA_IN = 1.0
@@ -222,78 +265,46 @@ CHP_IN = PhysParam(0.0)   # Intrinsic chemical potential
 # Define boundary and initial values
 #----------------------------------------------------------------
 Ts = PhysParam(300.0 / TEMPUNIT)
+Ts.read(inroot, 'external/temperature', unit=TEMPUNIT, comm=comm, rank=rank)
 #Lian change
 #Ts = 300 / 338.0             # K / [Chosen temperature unit]
 delV = PhysParam(0.07 / VUNIT)                  # V
+delV.read(inroot, 'external/voltage', unit=VUNIT, comm=comm, rank=rank)
 Resistor = PhysParam(8.0E3 / RUNIT)  # Ohm / [Chosen resistance unit]
+Resistor.read(inroot, 'external/resistor', unit=RUNIT, comm=comm, rank=rank)
 Capacitor = PhysParam(1e-9 / (CUNIT/VUNIT))
+Capacitor.read(inroot, 'external/capacitor', unit=CUNIT/VUNIT/1e-9, comm=comm, rank=rank)
 tramp = Parameter(10e-9 / TUNIT)
+tramp.read(inroot, 'time/rampt', unit=TUNIT/1e-9, comm=comm, rank=rank)
 etas = PhysParam(1.0)
 mus = PhysParam(-1.0)
 deff = PhysParam(10e-9 / LUNIT)
 
 T_i = PhysParam(Ts.value)   # TC
+T_i.read(inroot, 'initialization/temperature', unit=TEMPUNIT, comm=comm, rank=rank)
 eta_i = PhysParam(0.791296*math.sqrt(2))   # 1.0
+eta_i.read(inroot, 'initialization/SOP', comm=comm, rank=rank)
 mu_i = PhysParam(-0.914352*math.sqrt(2))   # -1.0
+mu_i.read(inroot, 'initialization/EOP', comm=comm, rank=rank)
 phi_i = PhysParam(-1000.0)  # negative here just to raise a flag. See below.
+phi_i.read(inroot, 'initialization/voltage', unit=VUNIT, comm=comm, rank=rank)
 
 Tcvarmethod = Parameter('random')
-sigma = Parameter(0.1 * TC.value)
-Tcvar0 = Parameter(2.0 * sigma.value)
-corr_len = Parameter(0.2 * Ly.value)
-rseed = Parameter(11793)
-TCIMP0 = Parameter(-20.0 / TEMPUNIT)
-RIMPDIS = Parameter(3e-9 / LUNIT)
-bump = Parameter(0.02)
-
-#-----------------------------------------------------------
-# Read input parameters
-#-----------------------------------------------------------
-intree = ET.parse('input.xml')
-inroot = intree.getroot()
-
-Ts.read(inroot, 'external/temperature', unit=TEMPUNIT, comm=comm, rank=rank)
-delV.read(inroot, 'external/voltage', unit=VUNIT, comm=comm, rank=rank)
-Resistor.read(inroot, 'external/resistor', unit=RUNIT, comm=comm, rank=rank)
-Capacitor.read(inroot, 'external/capacitor', unit=CUNIT/VUNIT/1e-9, comm=comm, rank=rank)
-HTRAN.read(inroot, 'external/heatdiss', unit=EUNIT/(TUNIT*LUNIT**2*TEMPUNIT), comm=comm, rank=rank)
-Lx.read(inroot, 'external/Lx', unit=LUNIT/1e-9, comm=comm, rank=rank)
-nx.read(inroot, 'external/Lx.mesh', comm=comm, rank=rank)
-Ly.read(inroot, 'external/Ly', unit=LUNIT/1e-9, comm=comm, rank=rank)
-ny.read(inroot, 'external/Ly.mesh', comm=comm, rank=rank)
-Lz.read(inroot, 'external/Lz', unit=LUNIT/1e-9, comm=comm, rank=rank)
-
-tf.read(inroot, 'time/endtime', unit=TUNIT/1e-9, comm=comm, rank=rank)
-savemethod.read(inroot, 'time/savemethod', comm=comm, rank=rank)
-saveperiod.read(inroot, 'time/saveperiod', comm=comm, rank=rank)
-tramp.read(inroot, 'time/rampt', unit=TUNIT/1e-9, comm=comm, rank=rank)
-
-CHI.read(inroot, 'internal/gap', unit=EUNIT/1.602176487e-19, comm=comm, rank=rank)
-KEH0.read(inroot, 'internal/ehrecrate', unit=LUNIT**3/TUNIT/(UCVOL/1e-9), comm=comm, rank=rank)
-
-T_i.read(inroot, 'initialization/temperature', unit=TEMPUNIT, comm=comm, rank=rank)
-eta_i.read(inroot, 'initialization/SOP', comm=comm, rank=rank)
-mu_i.read(inroot, 'initialization/EOP', comm=comm, rank=rank)
-phi_i.read(inroot, 'initialization/voltage', unit=VUNIT, comm=comm, rank=rank)
 Tcvarmethod.read(inroot, 'initialization/Tcvariance.method', comm=comm, rank=rank)
-rseed.read(inroot, 'initialization/Tcvariance/randomseed', comm=comm, rank=rank)
+sigma = Parameter(0.1 * TC.value)
 sigma.read(inroot, 'initialization/Tcvariance/sigma', unit=TEMPUNIT, comm=comm, rank=rank)
-corr_len.read(inroot, 'initialization/Tcvariance/correlationlength', unit=LUNIT/1e-9, comm=comm, rank=rank)
+Tcvar0 = Parameter(2.0 * sigma.value)
 Tcvar0.read(inroot, 'initialization/Tcvariance/mean', unit=TEMPUNIT, comm=comm, rank=rank)
+corr_len = Parameter(0.2 * Ly.value)
+corr_len.read(inroot, 'initialization/Tcvariance/correlationlength', unit=LUNIT/1e-9, comm=comm, rank=rank)
+rseed = Parameter(11793)
+rseed.read(inroot, 'initialization/Tcvariance/randomseed', comm=comm, rank=rank)
+TCIMP0 = Parameter(-20.0 / TEMPUNIT)
 TCIMP0.read(inroot, 'initialization/Tcvariance/Tcshift', unit=TEMPUNIT, comm=comm, rank=rank)
+RIMPDIS = Parameter(3e-9 / LUNIT)
 RIMPDIS.read(inroot, 'initialization/Tcvariance/radius', unit=LUNIT/1e-9, comm=comm, rank=rank)
+bump = Parameter(0.02)
 bump.read(inroot, 'initialization/Tcvariance/bump', comm=comm, rank=rank)
-
-newton_rel_tol.read(inroot, 'solverparameters/Newtonrelativetolerance', comm=comm, rank=rank)
-rel_par.read(inroot, 'solverparameters/Newtonrelaxation', comm=comm, rank=rank)
-max_iter.read(inroot, 'solverparameters/Newtonmaxiteration', comm=comm, rank=rank)
-tol_tstep.read(inroot, 'solverparameters/timesteptolerance', comm=comm, rank=rank)
-newton_abs_tol.read(inroot, 'solverparameters/Newtonabsolutetolerance', comm=comm, rank=rank)
-fenicslog.read(inroot, 'solverparameters/loglevel', comm=comm, rank=rank)
-directsolver.read(inroot, 'solverparameters/directsolver', comm=comm, rank=rank)
-alpha.read(inroot, 'solverparameters/Nitschefactor', comm=comm, rank=rank)
-
-# print('!!!!!!!!!!!!!!!!', Ts, delV, Resistor, Capacitor, HTRAN, tf, len_t_out, '!!!!!!!!!!!!!!!!')
 
 #filenames
 fig_file = 'solution/'
@@ -784,12 +795,12 @@ def save_sol(u, t):
     vtkfile_mu << (_u[1], t)
     # _u[2].rename("gamma_e", "gamma_e")
     # vtkfile_gamma_e << (_u[2], t)
-    _nd_e = project(NC*Fermi(_u[2])*Constant(UCVOL), V1)
+    _nd_e = project(NC*Fermi(_u[2])*UCVOL, V1)
     _nd_e.rename("n","n")
     vtkfile_nd_e << (_nd_e, t)
     # _u[3].rename("gamma_h", "gamma_h")
     # vtkfile_gamma_h << (_u[3], t)
-    _nd_h = project(NV*Fermi(_u[3])*Constant(UCVOL), V1)
+    _nd_h = project(NV*Fermi(_u[3])*UCVOL, V1)
     _nd_h.rename("p","p")
     vtkfile_nd_h << (_nd_h, t)
     _phi = project(_u[4]*Constant(VUNIT), V1)

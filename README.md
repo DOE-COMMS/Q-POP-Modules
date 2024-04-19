@@ -23,34 +23,56 @@ The core modules of Q-POP (**Q**uantum **P**hase-field **O**open-source **P**ack
     │   ├── imt.ufl
     │   ├── imt.h
     │   └── imt.cpp
-    └── imt-py
-        ├── VO2_GSBlockATP.py
-        └── qpop-imt.py
+    ├── imt-py
+    │   ├── VO2_GSBlockATP.py
+    │   └── qpop-imt.py
+    └── examples
+        └── input.xml
 ```
 
 ## Q-POP-IMT
+This module is an open-source package for simulating mesoscale, nonequilibrium, inhomogeneous processes of insulator-metal phase transitions and their associated electrical and structural responses.
 
 ### Setup development environment
-This module uses FEniCS C++ library and its Python interface (optional) for defining and solving finite-element partial differential equations. FEniCS C++ library of version 2019.1.0.post0 must be installed while its Python interface is optional. Note that this version of FEniCS is compatible only with openMPI v3.1 or older versions, because openMPI after v3.1 has undergone some major API updates.
+This module uses FEniCS C++ library and its Python interface for defining and solving finite-element partial differential equations. FEniCS C++ library and its Python interface of version 2019.1.0.post0 must be installed. Note that this version of FEniCS is compatible only with openMPI v3.1 or older versions, because openMPI after v3.1 has undergone some major API updates.
 
 ### How to build and run the program
-Q-POP-IMT uses cmake to build its executable. Simply create a build directory in the root directory of the package and enter it, then run the following in your preferred terminal: 
+The program supports parallel computing. One can run the Python interface of the module without any compilation (recommended). To run it on, say, 8 processors, run the below command in your desired directory:
+```
+mpirun -np 8 python directory-to-python-script/qpop-imt.py
+```
+Alternatively, one can use cmake to build the executable for the C++ version. To do this, simply create a build directory in the root directory of the package and enter it, then run the following: 
 ```
 cmake ..
 make
 ```
-The program supports parallel computing. To run the compiled executable on, say, 8 processors, run the below command in your desired directory:
+Then run the compiled executable in your desired directory:
 ```
 mpirun -np 8 directory-to-executable/qpop-imt
 ```
-Alternatively, one can use the Python interface of the module without any compilation (requires the Python interface of FEniCS to be installed):
-```
-mpirun -np 8 python directory-to-python-script/qpop-imt.py
-```
-The program requires an input file for specifying parameters; see following section for details. The output files will be generated in the current directory.
+The program requires an input file for specifying parameters; see the following section for details. The output files will be generated in the current directory.
 
 ### Input file
-This example simulates a rectangular VO<sub>2</sub> device, supplied with a direct voltage through a series resistor. The input file is written in `xml` form and must be named as `input.xml`. Below is an example of the input file.
+Users can provide various parameters in the `input.xml` file to control the simulation. There are several sections in `input.xml`:
+Section            | Explanation
+----------         | ------------
+`internal`         | Internal parameters of the material, e.g., Landau potential coefficients
+`external`         | External parameters, e.g., system sizes and ambient temperature
+`time`             | Parameters related to the time, e.g., simulation end time
+`initialization`   | Parameters for initialization, e.g., initial temperature
+`solverparameters` | Parameters for finite-element solver, e.g., linear solver choice
+
+Currently, the program considers one structural order parameter $\eta$ and one electronic order parameter $\psi$, and the Landau potential has the form $f_L=[a_1(T-T_1)/(2T_c)]\eta^2 + (a_2/4)\eta^4 + (a_3/6)\eta^6 + [b_1(T-T_2)/(2T_c)]\psi^2 + (b_2/4)\psi^4 + (b_3/6)\psi^6 + c_1\eta\psi - (c_2/2)\eta^2\psi^2 + (c_3/2)\eta^3\psi$. The Landau coefficients can be input in the `internal` section like
+```
+<internal>
+ <a1 unit='kBTc/f.u.'>1.0</a1>
+ <T1 unit='K'>200.0</T1>
+ ...
+</internal>
+```
+The unit is fixed in the program and here it is only to remind the user. If the internal parameters are not explicitly specified, the program will fall back to the case of VO<sub>2</sub>, a prototypical strongly correlated material exhibiting an insulator-metal transition near room temperature.
+
+The example below simulates a rectangular VO<sub>2</sub> device, supplied with a direct voltage through a series resistor.
 ```
 <?xml version="1.0"?>
 <input>
@@ -88,7 +110,7 @@ This example simulates a rectangular VO<sub>2</sub> device, supplied with a dire
  </solverparameters>
 </input>
 ```
-Almost all the parameters are self-explanatory. The units are fixed and serve only to remind the user of the corresponding parameter's unit. The `external` section defines external parameters: 
+Almost all the parameters are self-explanatory. For the `external` section: 
 Name          | Explanation
 ------------- | -------------------
 `temperature` | Ambient temperature
@@ -101,14 +123,14 @@ Name          | Explanation
 `Lz`          | Thickness of the device
 `mesh`        | Number of mesh vertices along a given dimension
 
-The `time` section defines the parameters related to the time:
+For the `time` section:
 Name         | Explanation
 ------------ | -----------
 `endtime`    | Simulation end time; beginning time is zero
 `savemethod` | Method of saving time-dependent solutions, used with `saveperiod` parameter. `auto` means to save every `saveperiod`-step solution; `fixed` means to save every `saveperiod`-nanosecond solution
 `saveperiod` | See `savemethod`
 
-The `initialization` section defines parameters for initialization:
+For the `initialization` section:
 Name          | Explanation
 ------------- | -----------
 `temperature` | Initial temperature of the device
@@ -126,7 +148,7 @@ Name                      | Explanation
 `directsolver`            | Which direct solver to use for solving the linear problem
 `loglevel`                | Log level; see [FEniCS manual](https://fenics.readthedocs.io/projects/dolfin/en/2017.2.0/apis/api_log.html "FEniCS log level")
 
-The example shown above simulates the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation"). In our test runs, the simulation took 2 hours to complete using 16 processors of an AMD EPYC 7742 CPU.
+This setup produces the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation"). In our test runs, the simulation took 2 hours to complete using 16 processors of an AMD EPYC 7742 CPU.
 
 ### Visualization of solutions
 The program generates solutions in pvd format that can be read and plotted by [ParaView](https://www.paraview.org "ParaView website"). The solution files are:
@@ -169,7 +191,7 @@ You can see the self-oscillation of the voltage output. The `psi.pvd` generated 
 <img src="https://github.com/DOE-COMMS/Q-POP-Modules/files/12197852/morph.pdf" alt="Spatiotemporal evolution of the electronic order parameter" width="500">
 </p>
 
-$\Psi$ represents the electronic phases: $\Psi=0$ means metal while $|\Psi|\sim 1$ means insulator. You will see a metallic filament growing and shrinking back and forth, generating the oscillating voltage output across the VO<sub>2</sub> film.
+$\psi$ represents the electronic phases: $\psi=0$ means metal while $|\psi|\sim 1$ means insulator. You will see a metallic filament growing and shrinking back and forth, generating the oscillating voltage output across the VO<sub>2</sub> film.
 
 ## Acknowledgement
 This open-source software development is supported as part of the Computational Materials Sciences Program funded by the U.S. Department of Energy, Office of Science, Basic Energy Sciences, under Award No. DE-SC0020145.
