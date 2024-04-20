@@ -1,3 +1,8 @@
+"""
+Last modified: 2024-04-20
+        Added the interface for block GS preoconditioner 
+"""
+
 from __future__ import print_function
 from fenics import *
 import math
@@ -5,7 +10,7 @@ import numpy as np
 # from numpy.random import rand
 import time
 import xml.etree.ElementTree as ET
-
+from customSolver import Problem, CustomSolver # user-defined class for custom solver 
 
 start_time = time.time()
 comm = MPI.comm_world
@@ -173,6 +178,10 @@ newton_abs_tol = Parameter(1e-6)
 newton_abs_tol.read(inroot, 'solverparameters/Newtonabsolutetolerance', comm=comm, rank=rank)
 newton_rel_tol = Parameter(1e-3)   #  1E-2
 newton_rel_tol.read(inroot, 'solverparameters/Newtonrelativetolerance', comm=comm, rank=rank)
+
+# linear solver parameters
+use_GS_block_preconditioner = Parameter(0)
+use_GS_block_preconditioner.read(inroot, 'solverparameters/useGSblockpreconditioner', comm=comm, rank=rank)  
 
 #not tuned parameters
 # num_steps = 1000     # Number of time steps
@@ -751,6 +760,64 @@ F = Feta + Fmu + Fe + Fh + Fphi + FT + Fbc_e_Nitsche + Fbc_h_Nitsche + Fbc_phi_N
 Jac = derivative(F, u, du)
 
 #----------------------------------------------------------
+# Define Block Gauss Seidel preconditioner weak form definition
+#----------------------------------------------------------
+
+
+#eta 
+Feta_pc = ((eta - eta_n)/dt + 2.0 * KN*dfb_deta(T_n, eta, mu))*v_1*dx(metadata={'quadrature_degree': qd}) \
+       + (KN*KAPPAN)*dot(grad(eta), grad(v_1))*dx(metadata={'quadrature_degree': qd}) \
+       - (KN*KAPPAN/deff)*(etas - eta)*v_1*ds(metadata={'quadrature_degree': qd})   # Boundary condition: interact with surroundings having an effective order parameter of etas
+
+#mu 
+nd_e_pc = NC*Fermi_b(gamma_en)    # Electron density
+nd_h_pc = NV*Fermi_b(gamma_hn) 
+nd_in_pc = NC*Fermi_b((-CHI*mu**2/2 + CHP_IN)/(KB*T_n)) # contain only mu,T
+Fmu_pc = ((mu - mu_n)/dt + 2.0 * KU*(dfb_dmu(T_n, eta, mu) \
+       + CHI*mu*(nd_e_pc + nd_h_pc - 2*nd_in_pc)))*v_2*dx(metadata={'quadrature_degree': qd}) + (KU*KAPPAU)*dot(grad(mu), grad(v_2))*dx(metadata={'quadrature_degree': qd}) \
+      - (KU*KAPPAU/deff)*(mus - mu)*v_2*ds(metadata={'quadrature_degree': qd})  # Boundary condition: interact with surroundings having an effective order parameter of mus
+
+#gamma_e
+nd_eeq_pc = NC*Fermi_b((-CHI*mu**2/2 + ECHARGE*phi + CHP_IN)/(KB*T_n))
+nd_heq_pc = NV*Fermi_b((-CHI*mu**2/2 - ECHARGE*phi - CHP_IN)/(KB*T_n)) 
+j_ex_pcpnp = -nd_e*MEA/ECHARGE*(KB*T_n*gamma_e.dx(0) + gamma_e*KB*T_n.dx(0) \
+                          + CHI*mu*mu.dx(0) - ECHARGE*phi.dx(0))
+j_ey_pcpnp = -nd_e*MEC/ECHARGE*(KB*T_n*gamma_e.dx(1) + gamma_e*KB*T_n.dx(1) \
+                          + CHI*mu*mu.dx(1) - ECHARGE*phi.dx(1))
+j_e_pcpnp = as_vector([j_ex_pcpnp, j_ey_pcpnp])  
+Fe_pc = (NC*dFermi(gamma_e)*(gamma_e - gamma_en)/dt \
+      - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_3*dx(metadata={'quadrature_degree': qd}) - dot(j_e_pcpnp, grad(v_3))*dx(metadata={'quadrature_degree': qd}) \
+        -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(0,metadata={'quadrature_degree': qd}) \
+        -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(1,metadata={'quadrature_degree': qd})
+
+#gamma_h
+j_hx_pcpnp = -nd_h*MHA/ECHARGE*(KB*T_n*gamma_h.dx(0) + gamma_h*KB*T_n.dx(0) \
+                          + CHI*mu*mu.dx(0) + ECHARGE*phi.dx(0))
+j_hy_pcpnp = -nd_h*MHC/ECHARGE*(KB*T_n*gamma_h.dx(1) + gamma_h*KB*T_n.dx(1) \
+                          + CHI*mu*mu.dx(1) + ECHARGE*phi.dx(1))
+j_h_pcpnp = as_vector([j_hx_pcpnp, j_hy_pcpnp]) 
+Fh_pc = (NV*dFermi(gamma_h)*(gamma_h - gamma_hn)/dt \
+        - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_4*dx(metadata={'quadrature_degree': qd}) - dot(j_h_pcpnp, grad(v_4))*dx(metadata={'quadrature_degree': qd}) \
+        - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(0, metadata={'quadrature_degree': qd}) \
+        - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(1, metadata={'quadrature_degree': qd})
+
+#phi
+Jy_pcpnp =ECHARGE*(j_hy_pcpnp - j_ey_pcpnp) 
+Fbc_phi_Nitsche_pc = -1.0/epsilon*(phi + (Resistor*Lz)*integral_phi - delVr \
+                                + (Resistor*Capacitor)*(phi - phi_n)/dt)*v_5*ds(0, metadata={'quadrature_degree': qd}) \
+                  + (integral_phi - Lx * Jy_pcpnp)*v_10*ds(0, metadata={'quadrature_degree': qd})
+
+Fphi_pc = dot(grad(phi), grad(v_5))*dx(metadata={'quadrature_degree': qd}) - (ECHARGE/PERMITTIVITY)*(nd_h - nd_e)*v_5*dx(metadata={'quadrature_degree': qd}) \
+        + Fbc_phi_Nitsche_pc 
+ 
+ # T 
+FT_pc = FT
+
+F_pc = Feta_pc + Fmu_pc + Fe_pc + Fh_pc + Fphi_pc + FT_pc 
+
+Jac_pc = derivative(F_pc,u,du) 
+
+#----------------------------------------------------------
 # Solve the problem and save the solution
 #----------------------------------------------------------
 # Encapsulate the process of updating the previous solution "u_n"
@@ -959,21 +1026,33 @@ successive_div = 0
 # dt = 1E-10
 
 logfile = open(allin1file, 'w')
-problem = NonlinearVariationalProblem(F, u, bcs, Jac)
-solver = NonlinearVariationalSolver(problem)
+if use_GS_block_preconditioner: 
+    print("Using Gauss-Seidel block preconditioner")
+    problem = Problem(Jac,Jac_pc,F, bcs) #user defined problem 
+    solver = CustomSolver(mesh)
+    prm = solver.parameters
+    prm['relaxation_parameter'] = rel_par.value 
+    prm['maximum_iterations'] = max_iter.value 
+    prm['absolute_tolerance'] = newton_abs_tol.value
+    prm['relative_tolerance'] = newton_rel_tol.value
+    prm['error_on_nonconvergence'] = False
 
-prm = solver.parameters
-prm['newton_solver']['relaxation_parameter'] = rel_par.value
-prm['newton_solver']['maximum_iterations'] = max_iter.value
-prm['newton_solver']['absolute_tolerance'] = newton_abs_tol.value
-prm['newton_solver']['relative_tolerance'] = newton_rel_tol.value
-prm['newton_solver']['error_on_nonconvergence'] = False   # Not stop program if Newton solver does not converge
+else: 
+    problem = NonlinearVariationalProblem(F, u, bcs, Jac)
+    solver = NonlinearVariationalSolver(problem)
 
-prm['newton_solver']['linear_solver'] = directsolver.value   # 'superlu_dist', 'mumps', 'gmres', 'bicgstab'
-# prm['newton_solver']['krylov_solver']['monitor_convergence'] = True
-# prm['newton_solver']['preconditioner'] = 'hypre_amg' #'hypre_euclid'   # 'hypre_euclid'
-# prm["newton_solver"]["krylov_solver"]["maximum_iterations"] = kr_solver_iter
-# prm["newton_solver"]["krylov_solver"]['error_on_nonconvergence'] = False  # Not stop program if linear solver does not converge
+    prm = solver.parameters
+    prm['newton_solver']['relaxation_parameter'] = rel_par.value
+    prm['newton_solver']['maximum_iterations'] = max_iter.value
+    prm['newton_solver']['absolute_tolerance'] = newton_abs_tol.value
+    prm['newton_solver']['relative_tolerance'] = newton_rel_tol.value
+    prm['newton_solver']['error_on_nonconvergence'] = False   # Not stop program if Newton solver does not converge
+
+    prm['newton_solver']['linear_solver'] = directsolver.value   # 'superlu_dist', 'mumps', 'gmres', 'bicgstab'
+    # prm['newton_solver']['krylov_solver']['monitor_convergence'] = True
+    # prm['newton_solver']['preconditioner'] = 'hypre_amg' #'hypre_euclid'   # 'hypre_euclid'
+    # prm["newton_solver"]["krylov_solver"]["maximum_iterations"] = kr_solver_iter
+    # prm["newton_solver"]["krylov_solver"]['error_on_nonconvergence'] = False  # Not stop program if linear solver does not converge
 
 # Write log file header. Tfail is the accumulative number of time refinement, Nfail is the accumulative number of Newton solver nonconvergence, and Terr is the final L2 error of time stepping.
 if rank == 0:
