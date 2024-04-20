@@ -51,10 +51,10 @@ Currently, the program considers one structural order parameter $\eta$ and one e
 \begin{aligned}
 f_L=& \frac{a_1(T-T_1)}{2T_c}\eta^2 + \frac{a_2}{4}\eta^4 + \frac{a_3}{6}\eta^6  \\
     & + \frac{b_1(T-T_2)}{2T_c}\psi^2 + \frac{b_2}{4}\psi^4 + \frac{b_3}{6}\psi^6  \\
-    & + c_1\eta\psi - \frac{c_2}{2}\eta^2\psi^2 + \frac{c_3}{2}\eta^3\psi .
+    & + c_1\eta\psi - \frac{c_2}{2}\eta^2\psi^2 + \frac{c_3}{2}\eta^3\psi ,
 \end{aligned}
 ```
-The energy gap form is approximated by the symmetry-allowed lowest order term on the electronic order parameter, $E_g = E_{g0}\psi^2$, where $E_{g0}$ is the gap coefficient. The detail of the phase-field model of insulator-metal transitions can be found in [Y. Shi and L.-Q. Chen, 2019](https://doi.org/10.1103/PhysRevApplied.11.014059 "Current-Driven Insulator-To-Metal Transition in Strongly Correlated VO2"). The Landau coefficients, gap coefficient, etc., can be input in the `internal` section like
+where $T$ is temperature. The energy gap form is approximated by the symmetry-allowed lowest order term on the electronic order parameter, $E_g = E_{g0}\psi^2$, where $E_{g0}$ is the gap coefficient. The detail of the phase-field model of insulator-metal transitions can be found in [Y. Shi and L.-Q. Chen, 2019](https://doi.org/10.1103/PhysRevApplied.11.014059 "Current-Driven Insulator-To-Metal Transition in Strongly Correlated VO2"). The Landau coefficients, gap coefficient, etc., can be input in the `internal` section like
 ```
 <internal>
  <a1 unit='kBTc/f.u.'>1.0</a1>
