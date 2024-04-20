@@ -31,7 +31,5 @@ Name       | Explanation
 `T.pvd`    | Time-dependent temperature field
 `n.pvd`    | Time-dependent electron density field
 `p.pvd`    | Time-dependent hole density field
-`gamma_e.pvd` | Time-dependent transformed variable that corresponds to energy level of electrons
-`gamma_h.pvd` | Time-dependent transformed variable that corresponds to energy level of holes 
 
 Each solution file listed above links to data at different moments. The data at a moment in turn links to data parallelly computed on distributed processors. The user can just use ParaView to read the `.pvd` files and then follow the guide of [ParaView](https://docs.paraview.org/en/latest/UsersGuide/index.html "ParaView user's guide") to plot spatiotemporal fields.
