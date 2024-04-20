@@ -120,6 +120,7 @@ The example below simulates a rectangular VO<sub>2</sub> device, supplied with a
   <Newtonmaxiteration>15</Newtonmaxiteration>
   <timesteptolerance>1e-2</timesteptolerance>
   <directsolver>pastix</directsolver>
+  <useGSblockpreconditioner>0</useGSblockpreconditioner>
   <loglevel>INFO</loglevel>
  </solverparameters>
 </input>
@@ -160,6 +161,7 @@ Name                      | Explanation
 `Newtonmaxiteration`      | Limit of the iteration times for the Newton's method
 `timesteptolerance`       | Relative tolerance for the adaptive time stepping error
 `directsolver`            | Which direct solver to use for solving the linear problem
+`useGSblockpreconditioner` | Whether to use our developed block Gauss-Seidel preconditioned GMRES iterative solver to solve the linear problem
 `loglevel`                | Log level; see [FEniCS manual](https://fenics.readthedocs.io/projects/dolfin/en/2017.2.0/apis/api_log.html "FEniCS log level")
 
 This setup produces the intrinsic voltage self-oscillation in VO<sub>2</sub> thin films, which was published in Physical Review Applied; see [Y. Shi and L.-Q. Chen, 2022](https://doi.org/10.1103/PhysRevApplied.17.014042 "Intrinsic voltage self-oscillation"). In our test runs, the simulation took 2 hours to complete using 16 processors of an AMD EPYC 7742 CPU.

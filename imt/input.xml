@@ -30,7 +30,7 @@
 	<Newtonmaxiteration>15</Newtonmaxiteration>
 	<timesteptolerance>1e-4</timesteptolerance>
 	<directsolver>pastix</directsolver>
-	<useGSblockpreconditioner>1</useGSblockpreconditioner>
+	<useGSblockpreconditioner>0</useGSblockpreconditioner>
 	<loglevel>INFO</loglevel>
     </solverparameters>
 </input>
