@@ -57,13 +57,34 @@ f_L=& \frac{a_1(T-T_1)}{2T_c}\eta^2 + \frac{a_2}{4}\eta^4 + \frac{a_3}{6}\eta^6 
 where $T$ is temperature. The energy gap form is approximated by the symmetry-allowed lowest order term on the electronic order parameter, $E_g = E_{g0}\psi^2$, where $E_{g0}$ is the gap coefficient. The detail of the phase-field model of insulator-metal transitions can be found in [Y. Shi and L.-Q. Chen, 2019](https://doi.org/10.1103/PhysRevApplied.11.014059 "Current-Driven Insulator-To-Metal Transition in Strongly Correlated VO2"). The Landau coefficients, gap coefficient, etc., can be input in the `internal` section like
 ```
 <internal>
- <a1 unit='kBTc/f.u.'>1.0</a1>
+ <a1 unit='kB*Tc/u.c.'>1.0</a1>
  <T1 unit='K'>200.0</T1>
  <gapcoeff unit='eV'>0.5</gapcoeff>
  ...
 </internal>
 ```
-The units are fixed in the program and here they are only to remind the users. If the internal parameters are not explicitly specified, the program will fall back to the case of VO<sub>2</sub>, a prototypical strongly correlated material exhibiting an insulator-metal transition near room temperature.
+The units are fixed in the program and here they are only to remind the users (u.c. means unit cell volume). Other internal parameters are:
+Name | Explanation
+---- | -----------
+`ucellvol` | Unit cell volume [nm<sup>-3</sup>]
+`SPTtimeconst` | Time constant of the structural phase transition [ns]
+`IMTtimeconst` | Time constant of the insulator-metal transition [ns]
+`excitdensity` | Excited electron density inducing the insulator-metal transition [u.c.<sup>-1</sup>]; attribute of `IMTtimeconst`
+`SOPgradcoeff` | Gradient energy coefficient for the structural order parameter [eV/nm]
+`EOPgradcoeff` | Gradient energy coefficient for the electronic order parameter [eV/nm]
+`conductbandeffDOS` | Effective density of states of the conduction band [u.c.<sup>-1</sup>]
+`valencebandeffDOS` | Effective density of states of the valence band [u.c.<sup>-1</sup>]
+`elecmobilityx` | Electron mobility in the $\hat{x}$ direction [cm<sup>2</sup>/(Vs)]
+`elecmobilityy` | Electron mobility in the $\hat{y}$ direction [cm<sup>2</sup>/(Vs)]
+`holemobilityx` | hole mobility in the $\hat{x}$ direction [cm<sup>2</sup>/(Vs)]
+`holemobilityy` | hole mobility in the $\hat{y}$ direction [cm<sup>2</sup>/(Vs)]
+`ehrecrate` | Electron-hole recombination rate constant [u.c./ns]
+`relativepermitt` | Relative permittivity
+`volheatcapacity` | Volumetric heat capacity at constant pressure [J/(m<sup>3</sup>K)]
+`thermalconduct` | Thermal conductivity [W/(mK)]
+`heatdiss` | Heat dissipation coefficient [W/(m<sup>2</sup>K)]
+
+If not explicitly specified, the internal parameters will default to those of VO<sub>2</sub>, a prototypical strongly correlated material exhibiting an insulator-metal transition near room temperature.
 
 The example below simulates a rectangular VO<sub>2</sub> device, supplied with a direct voltage through a series resistor.
 ```
