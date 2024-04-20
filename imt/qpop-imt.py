@@ -977,7 +977,7 @@ prm['newton_solver']['linear_solver'] = directsolver.value   # 'superlu_dist', '
 
 # Write log file header. Tfail is the accumulative number of time refinement, Nfail is the accumulative number of Newton solver nonconvergence, and Terr is the final L2 error of time stepping.
 if rank == 0:
-    logfile.write(f'          #Step            Time       Time step           Tfail           Nfail      Other fail    Av. EOP norm       Av. T (K)  VO2 V drop (V)     VO2 R (Ohm)\n')
+    logfile.write(f'          #Step            Time       Time step           Tfail           Nfail      Other fail    Av. EOP norm       Av. T (K)           V (V)         R (Ohm)\n')
     logfile.flush()
 
 while t < tf.value + 1e-9*tf.value:
