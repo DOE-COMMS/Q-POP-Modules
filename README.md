@@ -153,24 +153,22 @@ Name       | Explanation
 `T.pvd`    | Time-dependent temperature field
 `n.pvd`    | Time-dependent electron density field
 `p.pvd`    | Time-dependent hole density field
-`niov.pvd` | Time-dependent ionized oxygen vacancy concentration field
-`nnov.pvd` | Time-dependent neutral oxygen vacancy concentration field
 
 Each solution file listed above links to data at different moments. The data at a moment in turn links to data parallelly computed on distributed processors. The user can just use ParaView to read the `.pvd` files and then follow the guide of [ParaView](https://docs.paraview.org/en/latest/UsersGuide/index.html "ParaView user's guide") to plot spatiotemporal fields.
 
 The program also generates and updates on the fly a log.txt file that summarizes the temporal evolution of several physical quantities and diagnostics. The columns are summarized in the table below.
-Column name  | Explanation
------------- | -----------
-`#Step`      | Number of time steps
-`Time`       | Time in nanosecond
-`Time step`  | Current time step size
-`Tfail`      | Number of times the adaptive time stepping shrinks the time step
-`Nfail`      | Number of times the Newton's iterative solver diverges
-`Other fail` | Number of times the linear solver diverges
-`Av. EOP`    | Film-averaged electronic order parameter
-`Av. SOP`    | Film-averaged structural order parameter
-`V (V)`      | Voltage drop across the VO<sub>2</sub> film
-`R (Ohm)`    | Resistance of the VO<sub>2</sub> film
+Column name    | Explanation
+-------------- | -----------
+`#Step`        | Number of time steps
+`Time`         | Time in nanosecond
+`Time step`    | Current time step size
+`Tfail`        | Number of times the adaptive time stepping shrinks the time step
+`Nfail`        | Number of times the Newton's iterative solver diverges
+`Other fail`   | Number of times the linear solver diverges
+`Av. EOP norm` | Spatially averaged electronic order parameter norm
+`Av. T (K)`    | Spatially averaged temperature
+`V (V)`        | Voltage drop across the VO<sub>2</sub> film
+`R (Ohm)`      | Resistance of the VO<sub>2</sub> film
 
 The time-dependent voltage drop across the VO<sub>2</sub> film (Column `V (V)` in `log.txt`) generated in the example is shown in the figure below.
 
@@ -184,7 +182,7 @@ You can see the self-oscillation of the voltage output. The `psi.pvd` generated 
 <img src="https://github.com/DOE-COMMS/Q-POP-Modules/files/12197852/morph.pdf" alt="Spatiotemporal evolution of the electronic order parameter" width="500">
 </p>
 
-$\psi$ represents the electronic phases: $\psi=0$ means metal while $|\psi|\sim 1$ means insulator. You will see a metallic filament growing and shrinking back and forth, generating the oscillating voltage output across the VO<sub>2</sub> film.
+$\psi$ represents the electronic phases: $\psi=0$ means metal while $|\psi|\sim 1$ means insulator. You will see a metallic filament automatically growing and shrinking back and forth, generating the oscillating voltage output across the VO<sub>2</sub> film.
 
 ## Acknowledgement
 This open-source software development is supported as part of the Computational Materials Sciences Program funded by the U.S. Department of Energy, Office of Science, Basic Energy Sciences, under Award No. DE-SC0020145.
