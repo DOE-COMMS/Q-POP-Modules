@@ -1026,7 +1026,7 @@ successive_div = 0
 # dt = 1E-10
 
 logfile = open(allin1file, 'w')
-if use_GS_block_preconditioner: 
+if use_GS_block_preconditioner.value: 
     print("Using Gauss-Seidel block preconditioner")
     problem = Problem(Jac,Jac_pc,F, bcs) #user defined problem 
     solver = CustomSolver(mesh)
