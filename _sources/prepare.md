@@ -4,7 +4,7 @@
 For a hassle-free installation, it is recommended to use Ubuntu 20.04.
 :::
 
-## Installing FEniCS C++
+## Installing FEniCS
 
 ### GNU 9
 It is necessary to use GNU Compiler Collection 9. On systems that default to other versions of the GNU compiler, manually switching to GNU-9 will be required.
@@ -20,6 +20,26 @@ sudo update-alternatives --config gcc
 sudo update-alternatives --config g++
 sudo update-alternatives --config gfortran
 ```
+
+### OpenMPI-3
+All testing was done with OpenMPI-3.1.6. Newer versions of OpenMPI may not work due to API changes that are not supported by FEniCS.
+Since it is no longer under active development, it can only be obtained from source. To avoid conflicts with existing MPI installations on your system, install it in your home directory.
+Please ensure that the GNU-9 compilers are the default while installing OpenMPI.
+:::{Note}
+mpi4py, if already installed, will need to uninstalled and reinstalled after the following steps.
+:::
+```sh
+wget https://download.open-mpi.org/release/open-mpi/v3.1/openmpi-3.1.6.tar.gz
+tar xvzf openmpi-3.1.6.tar.gz
+cd openmpi-3.1.6
+./configure --prefix=$HOME/openmpi3
+make all
+make install
+MPI_DIR=$HOME/openmpi3
+echo "export LD_LIBRARY_PATH=$MPI_DIR/lib:$LD_LIBRARY_PATH; export PATH=$MPI_DIR/bin:$PATH" >> ~/.bashrc
+pip3 install -U mpi4py 
+```
+To switch back to your pre-existing MPI installations, remove/decrease the priority of the newly added values to the LD_LIBRARY_PATH and PATH environment variables.
 
 ### Boost 1.71
 In newer versions of Boost, the following error may be encountered:
@@ -38,6 +58,12 @@ cd boost_1_71_0/
 ./b2 install
 ```
 This will install Boost-1.71.0 to the system's home directory. To install elsewhere, the prefix option in the above command must be set to a desired path.
+
+### PETSc
+The linear matrix solvers used by Q-POP-IMT are provided by PETSc. All testing was done with PETSc-3.15.1, though any version newer than 3.7 is compatible with FEniCS. To install, please refer to the PETSc (https://petsc.org/release/install/download/) and petsc4py (https://pypi.org/project/petsc4py/) documentation. A minimal configuration spec is 
+```sh
+--download-metis --download-parmetis --download-ptscotch --download-suitesparse --download-mumps --download-scalapack --download-hypre --with-mpi-dir=$MPI_DIR --with-petsc4py
+```
 
 ### Dolfin
 ```sh
@@ -58,13 +84,17 @@ Or, on systems with Ubuntu 22.04, use
 ```sh
 cmake -DCMAKE_INSTALL_PREFIX=$HOME/fenics/dolfin -DBOOST_ROOT=$HOME/boost ..
 ```
-
+To install FEniCS C++ and Python both,
 ```sh
 make
 make install
-cd ../..
+cd ../python
+pip3 install .
 echo "source $HOME/fenics/dolfin/share/dolfin/dolfin.conf" >> ~/.bashrc
 ```
+:::{note}
+The Python interface for FEniCS has various dependencies. Refer the FEniCS (https://fenics.readthedocs.io/en/latest/installation.html) page.
+:::
 A new terminal must be opened for changes to take effect. Alternatively, `source ~/.bashrc` can be used.
 
 ## Installing Sphinx 

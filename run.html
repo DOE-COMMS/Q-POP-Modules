@@ -437,20 +437,19 @@ document.write(`
 <h1>Build and Run<a class="headerlink" href="#build-and-run" title="Permalink to this heading">#</a></h1>
 <section id="build">
 <h2>Build<a class="headerlink" href="#build" title="Permalink to this heading">#</a></h2>
-<p>In the base directory ‘Q-POP-Modules’, run</p>
+<p>In the base directory ‘Q-POP-Modules’, for Ubuntu-20.04 run</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/dolfin.conf
 cmake<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
 cmake<span class="w"> </span>--build<span class="w"> </span>build
 </pre></div>
 </div>
-<p>if using Ubuntu 20.04, and</p>
+<p>and if using Ubuntu-22.04, run</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/dolfin.conf
 cmake<span class="w"> </span>-DBOOST_ROOT<span class="o">=</span><span class="nv">$HOME</span>/boost<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
 cmake<span class="w"> </span>--build<span class="w"> </span>build
 </pre></div>
 </div>
-<p>if using Ubuntu 22.04.</p>
-<p>The above can also be run to similar effect by combining the first two commands. This builds Q-POP-IMT without adding Dolfin’s paths to the environment.</p>
+<p>The above can also be run to similar effect by combining the first two commands. This builds Q-POP-IMT without adding Dolfin’s paths to the environment. For example, on Ubuntu-20.04:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DDOLFIN_DIR<span class="o">=</span><span class="nv">$HOME</span>/fenics/dolfin/share/dolfin/cmake<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-S<span class="w"> </span>.
 cmake<span class="w"> </span>--build<span class="w"> </span>build
 </pre></div>
@@ -458,7 +457,11 @@ cmake<span class="w"> </span>--build<span class="w"> </span>build
 </section>
 <section id="run">
 <h2>Run<a class="headerlink" href="#run" title="Permalink to this heading">#</a></h2>
-<p>To run the simulation, there are two equivalent methods:</p>
+<p>To run the simulation using Python, navigate to Q-POP-Modules/imt and then use</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">2</span><span class="w"> </span>python3<span class="w"> </span>./qpop-imt.py
+</pre></div>
+</div>
+<p>To run the simulation using C++, there are two equivalent methods:</p>
 <ol class="arabic simple">
 <li><p>You can change directory (cd) to the <code class="docutils literal notranslate"><span class="pre">build/imt/imt-cpp</span></code> folder, create an input file (see ‘input.md’ for an example), and then run the <code class="docutils literal notranslate"><span class="pre">qpop-imt</span></code> executable directly from the build directory using</p></li>
 </ol>

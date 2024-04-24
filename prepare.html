@@ -420,9 +420,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-fenics-c">Installing FEniCS C++</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-fenics">Installing FEniCS</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gnu-9">GNU 9</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#openmpi-3">OpenMPI-3</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boost-1-71">Boost 1.71</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#petsc">PETSc</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfin">Dolfin</a></li>
 </ul>
 </li>
@@ -444,8 +446,8 @@ document.write(`
 <p class="admonition-title">Caution</p>
 <p>For a hassle-free installation, it is recommended to use Ubuntu 20.04.</p>
 </div>
-<section id="installing-fenics-c">
-<h2>Installing FEniCS C++<a class="headerlink" href="#installing-fenics-c" title="Permalink to this heading">#</a></h2>
+<section id="installing-fenics">
+<h2>Installing FEniCS<a class="headerlink" href="#installing-fenics" title="Permalink to this heading">#</a></h2>
 <section id="gnu-9">
 <h3>GNU 9<a class="headerlink" href="#gnu-9" title="Permalink to this heading">#</a></h3>
 <p>It is necessary to use GNU Compiler Collection 9. On systems that default to other versions of the GNU compiler, manually switching to GNU-9 will be required.</p>
@@ -462,6 +464,28 @@ sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<
 sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<span class="w"> </span>gfortran
 </pre></div>
 </div>
+</section>
+<section id="openmpi-3">
+<h3>OpenMPI-3<a class="headerlink" href="#openmpi-3" title="Permalink to this heading">#</a></h3>
+<p>All testing was done with OpenMPI-3.1.6. Newer versions of OpenMPI may not work due to API changes that are not supported by FEniCS.
+Since it is no longer under active development, it can only be obtained from source. To avoid conflicts with existing MPI installations on your system, install it in your home directory.
+Please ensure that the GNU-9 compilers are the default while installing OpenMPI.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>mpi4py, if already installed, will need to uninstalled and reinstalled after the following steps.</p>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://download.open-mpi.org/release/open-mpi/v3.1/openmpi-3.1.6.tar.gz
+tar<span class="w"> </span>xvzf<span class="w"> </span>openmpi-3.1.6.tar.gz
+<span class="nb">cd</span><span class="w"> </span>openmpi-3.1.6
+./configure<span class="w"> </span>--prefix<span class="o">=</span><span class="nv">$HOME</span>/openmpi3
+make<span class="w"> </span>all
+make<span class="w"> </span>install
+<span class="nv">MPI_DIR</span><span class="o">=</span><span class="nv">$HOME</span>/openmpi3
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;export LD_LIBRARY_PATH=</span><span class="nv">$MPI_DIR</span><span class="s2">/lib:</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">; export PATH=</span><span class="nv">$MPI_DIR</span><span class="s2">/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+pip3<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>mpi4py<span class="w"> </span>
+</pre></div>
+</div>
+<p>To switch back to your pre-existing MPI installations, remove/decrease the priority of the newly added values to the LD_LIBRARY_PATH and PATH environment variables.</p>
 </section>
 <section id="boost-1-71">
 <h3>Boost 1.71<a class="headerlink" href="#boost-1-71" title="Permalink to this heading">#</a></h3>
@@ -481,6 +505,13 @@ tar<span class="w"> </span>-xzf<span class="w"> </span>boost_1_71_0.tar.gz
 </pre></div>
 </div>
 <p>This will install Boost-1.71.0 to the system’s home directory. To install elsewhere, the prefix option in the above command must be set to a desired path.</p>
+</section>
+<section id="petsc">
+<h3>PETSc<a class="headerlink" href="#petsc" title="Permalink to this heading">#</a></h3>
+<p>The linear matrix solvers used by Q-POP-IMT are provided by PETSc. All testing was done with PETSc-3.15.1, though any version newer than 3.7 is compatible with FEniCS. To install, please refer to the PETSc (https://petsc.org/release/install/download/) and petsc4py (https://pypi.org/project/petsc4py/) documentation. A minimal configuration spec is</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>--download-metis<span class="w"> </span>--download-parmetis<span class="w"> </span>--download-ptscotch<span class="w"> </span>--download-suitesparse<span class="w"> </span>--download-mumps<span class="w"> </span>--download-scalapack<span class="w"> </span>--download-hypre<span class="w"> </span>--with-mpi-dir<span class="o">=</span><span class="nv">$MPI_DIR</span><span class="w"> </span>--with-petsc4py
+</pre></div>
+</div>
 </section>
 <section id="dolfin">
 <h3>Dolfin<a class="headerlink" href="#dolfin" title="Permalink to this heading">#</a></h3>
@@ -502,11 +533,17 @@ mkdir<span class="w"> </span>build
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="nv">$HOME</span>/fenics/dolfin<span class="w"> </span>-DBOOST_ROOT<span class="o">=</span><span class="nv">$HOME</span>/boost<span class="w"> </span>..
 </pre></div>
 </div>
+<p>To install FEniCS C++ and Python both,</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make
 make<span class="w"> </span>install
-<span class="nb">cd</span><span class="w"> </span>../..
+<span class="nb">cd</span><span class="w"> </span>../python
+pip3<span class="w"> </span>install<span class="w"> </span>.
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source </span><span class="nv">$HOME</span><span class="s2">/fenics/dolfin/share/dolfin/dolfin.conf&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Python interface for FEniCS has various dependencies. Refer the FEniCS (https://fenics.readthedocs.io/en/latest/installation.html) page.</p>
 </div>
 <p>A new terminal must be opened for changes to take effect. Alternatively, <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">~/.bashrc</span></code> can be used.</p>
 </section>
@@ -572,9 +609,11 @@ make<span class="w"> </span>html
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-fenics-c">Installing FEniCS C++</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-fenics">Installing FEniCS</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gnu-9">GNU 9</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#openmpi-3">OpenMPI-3</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boost-1-71">Boost 1.71</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#petsc">PETSc</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfin">Dolfin</a></li>
 </ul>
 </li>
