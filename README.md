@@ -1,14 +1,16 @@
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/DOE-COMMS/Q-POP-Modules/total)
 ![GitHub release version](https://img.shields.io/github/v/release/DOE-COMMS/Q-POP-Modules?color=%2350C878&include_prereleases)
 ![License](https://img.shields.io/github/license/DOE-COMMS/Q-POP-Modules)
 ![GitHub Size](https://img.shields.io/github/repo-size/DOE-COMMS/Q-POP-Modules)
 ![HitCount](https://hits.dwyl.com/DOE-COMMS/Q-POP-Modules.svg?style=flat-square&show=unique)
 ![HitCount](https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2FDOE-COMMS%2FQ-POP-Modules.json&label=total%20hits&color=pink)
 
-# Q-POP modules
+# Q-POP Modules
 The core modules of Q-POP (**Q**uantum **P**hase-field **O**pen-source **P**ackage) aim to deliver flexible, scalable, and extendable phase-field solvers that will enable researchers to study quantum materials and phase transitions with ease. The software will be made open-source in three stages, with new physics capabilities added with release. The module for insulator-metal transitions (Q-POP-IMT) was the first to be released in April 2024. The superconductor and the dynamical phase-field modules will follow soon.
 
-## Folder structure
+## Acknowledgements
+The development of this open-source software is supported by the U.S. Department of Energy, Office of Science, Basic Energy Sciences, under Award No. DE-SC0020145 as part of the Computational Materials Sciences Program.
+
+## Folder Structure
 ```sh
 ├── stash
 ├── external
@@ -26,17 +28,17 @@ The core modules of Q-POP (**Q**uantum **P**hase-field **O**pen-source **P**acka
 ## Q-POP-IMT
 This module is an open-source phase-field package for simulating mesoscale, nonequilibrium, inhomogeneous processes of insulator-metal phase transitions and their associated electrical and structural responses.
 
-### Setup development environment
-This module uses FEniCS C++ library and its Python interface for defining and solving finite-element partial differential equations, capable of exascale simulations. FEniCS C++ library and its Python interface of version 2019.1.0.post0 must be installed. Note that this version of FEniCS is compatible only with openMPI v3.1 or older versions, because openMPI after v3.1 has undergone some major API updates.
+### Setup Development Environment
+This module uses FEniCS C++ library and its Python interface for defining and solving finite-element partial differential equations, and is capable of exascale simulations. The FEniCS C++ library and its Python interface of version 2019.1.0.post0 must be installed. Note that this version of FEniCS is compatible only with openMPI v3.1 or older versions, due to the dependence of FEniCS on mpi4py, which itself does not have a stable OpenMPI 4+ implementation currently. 
 
-### How to run the program
+### Running the Program
 The program supports parallel computing. One can run the Python interface of the module without any compilation. To run it on, say, 8 processors, run the below command in your desired directory:
 ```
 mpirun -np 8 python directory-to-python-script/qpop-imt.py
 ```
 The program requires an input file for specifying parameters. The output files will be generated in the current directory.
 
-### Input file
+### Input File
 Users can provide various parameters in the `input.xml` file to control the simulation. There are several sections in `input.xml`:
 Section            | Explanation
 ----------         | ------------
@@ -206,6 +208,3 @@ You can see the self-oscillation of the voltage output. The `psi.pvd` generated 
 </p>
 
 $\psi$ represents the electronic phases: $\psi=0$ means metal while $|\psi|\sim 1$ means insulator. You will see a metallic filament automatically growing and shrinking back and forth, generating the oscillating voltage output across the VO<sub>2</sub> film.
-
-## Acknowledgement
-This open-source software development is supported as part of the Computational Materials Sciences Program funded by the U.S. Department of Energy, Office of Science, Basic Energy Sciences, under Award No. DE-SC0020145.
