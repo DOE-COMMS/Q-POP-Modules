@@ -954,33 +954,6 @@ def rel_err_L2(u1, u2):
 
     return math.sqrt(r / n)
     
-# def compute_value_at_vertex(u,mesh,nx,ny): #Note: compute_vertex_value() is a fenics function
-#     eta_vertex = np.reshape(u.sub(0).compute_vertex_values(mesh),(ny+1,nx+1))
-#     mu_vertex = np.reshape(u.sub(1).compute_vertex_values(mesh),(ny+1,nx+1))
-#     gamma_e_vertex =np.reshape(u.sub(2).compute_vertex_values(mesh),(ny+1,nx+1))
-#     gamma_h_vertex =np.reshape(u.sub(3).compute_vertex_values(mesh),(ny+1,nx+1))
-#     phi_vertex = np.reshape(u.sub(4).compute_vertex_values(mesh),(ny+1,nx+1))
-#     T_vertex = np.reshape(u.sub(5).compute_vertex_values(mesh),(ny+1,nx+1))
-# 
-#     return [eta_vertex,mu_vertex,gamma_e_vertex,gamma_h_vertex,phi_vertex,T_vertex]
-# 
-# def save_arrays_to_txt(dict,filename): # input must be a dictionary 
-#     with open(filename, 'w') as outfile:
-#         for key,value in dict.items():
-#             outfile.write(key+'\n')       
-#             np.savetxt(outfile, value, fmt='%-8.4f') #a 8-character wide field with 4 digits following the decimal point
-# 
-# def get_diagonal_entries(u_list): #list of function arrays
-#     diagonals_values = []
-#     x,y = u_list[0].shape 
-#     for array_ in u_list:
-#         diagonal_single = []
-#         for i in range(x): # avoid index out of range 
-#             diagonal_single.append(round(array_[i][3*i],4))
-#         diagonals_values.append(diagonal_single)
-#     return diagonals_values
-
-
 # Define reservoir functions for adaptive time-stepping
 # dudt_n = Function(V)  # Stores o(dt) approximation of time direvative of u at last time step
 # fa.assign(dudt_n, [detadt_0, dmudt_0, dgammaedt_0, dgammahdt_0, dphidt_0, dTdt_0, dintegralphidt_0])
