@@ -836,7 +836,10 @@ def solve4dt(t):
     # problem = NonlinearVariationalProblem(F, u, bcs, Jac)
     # solver = NonlinearVariationalSolver(problem)
 
-    num, converged = solver.solve()   # Return whether the solver converges
+    if use_GS_block_preconditioner: 
+        num, converged = solver.solve(problem, u.vector())    
+    else:
+        num, converged = solver.solve()   # Return whether the solver converges
 
     # Update previous solution
     # update_u_n(u)
