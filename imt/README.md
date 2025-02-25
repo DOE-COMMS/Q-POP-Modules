@@ -6,7 +6,7 @@
 - python xxx.py
 - mpirun -n 4 python xxx.py  # running the code on 4 cores in parallel
 
-3. Explanation for the file VO2_GSBlockATP.py 
+3. Explanation for the file customSolver.py 
 -    For the block gauss seidel preconditioner code, we group the variables in the Allen-Cahn equation, and the variables in the PNP equations. We thee give the following order: the Allen-Cahn equation, temperature equation and the PNP equation. The Gauss Seidel block preconditioner uses the lower triangular blocks of the three system of equations. 
 -   Nonlinear Solver: Newton solver 
 -   linear solver: Preconditioner GMRES, the block preconditioner is inverted using a direct solver at this stage. 
