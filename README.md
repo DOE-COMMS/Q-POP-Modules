@@ -19,7 +19,7 @@ The development of this open-source software is supported by the U.S. Department
 │       ├── pugixml.cpp
 │       └── pugixml.hpp
 └── imt
-    ├── VO2_GSBlockATP.py
+    ├── customSolver.py
     ├── qpop-imt.py
     └── examples
         └── input.xml
