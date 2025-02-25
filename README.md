@@ -93,9 +93,9 @@ The example below simulates a rectangular VO<sub>2</sub> device, supplied with a
 <?xml version="1.0"?>
 <input>
  <external>
-  <temperature unit='K'>300.1</temperature>
-  <voltage unit='V'>5.6</voltage>
-  <resistor unit='Ohm'>2.5e5</resistor>
+  <temperature unit='K'>300.0</temperature>
+  <voltage unit='V'>9.0</voltage>
+  <resistor unit='Ohm'>5e5</resistor>
   <capacitor unit='nF'>0.0</capacitor>
   <heatdiss unit='W/m^2K'>3e6</heatdiss>
   <Lx unit='nm' mesh='100'>100.0</Lx>
@@ -121,7 +121,7 @@ The example below simulates a rectangular VO<sub>2</sub> device, supplied with a
   <Newtonrelativetolerance>1e-3</Newtonrelativetolerance>
   <Newtonmaxiteration>15</Newtonmaxiteration>
   <timesteptolerance>1e-2</timesteptolerance>
-  <directsolver>pastix</directsolver>
+  <directsolver>mumps</directsolver>
   <useGSblockpreconditioner>0</useGSblockpreconditioner>
   <loglevel>INFO</loglevel>
  </solverparameters>
