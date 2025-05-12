@@ -517,21 +517,27 @@ comm.Barrier()
 boundary_markers = MeshFunction('size_t', mesh, meshdim - 1)
 boundary_markers.set_all(9)
 
-class BoundaryX0(SubDomain):
+class BoundaryY0(SubDomain):
     def inside(self, x, on_boundary):
         return on_boundary and near(x[1], 0)
-bx0 = BoundaryX0()
-bx0.mark(boundary_markers, 0)   # 0 marks y = 0 boundary
+by0 = BoundaryY0()
+by0.mark(boundary_markers, 0)   # 0 marks y = 0 boundary
 
-class BoundaryX1(SubDomain):
+class BoundaryY1(SubDomain):
     def inside(self, x, on_boundary):
         return on_boundary and near(x[1], Ly.value)
-bx1 = BoundaryX1()
-bx1.mark(boundary_markers, 1)   # 1 marks y = Ly boundary
+by1 = BoundaryY1()
+by1.mark(boundary_markers, 1)   # 1 marks y = Ly boundary
+
+class BoundaryZ0(SubDomain):
+    def inside(self, x, on_boundary):
+        return on_boundary and near(x[2], 0)
+bz0 = BoundaryZ0()
+bz0.mark(boundary_markers, 2)   # 2 marks z = 0 boundary
 
 ds = Measure('ds', domain=mesh, subdomain_data=boundary_markers)  # Measure ds
 
-bc_phi_1 = DirichletBC(V.sub(4), Constant(0), bx1)  # Dirichlet boundary condition for phi
+bc_phi_1 = DirichletBC(V.sub(4), Constant(0), by1)  # Dirichlet boundary condition for phi
 
 # def domain_lam_1_2(x):
 #     return x[1] > tol and x[1] < Ly - tol
@@ -710,11 +716,14 @@ FT = (CPV*(T - T_n)/dt \
       # - ECHARGE*((j_hx - j_ex)**2/(nd_e*MEA + nd_h*MHA) \
       #            + (j_hy - j_ey)**2/(nd_e*MEC + nd_h*MHC)) \
       - ECHARGE * dot(j_h - j_e, inv(nd_e*ME + nd_h*MH)*(j_h - j_e)) \
-      + dUdt \
-      + (HTRAN/Lz)*(T - Ts))*v_6*dx(metadata={'quadrature_degree': qd}) \
+      + dUdt)*v_6*dx(metadata={'quadrature_degree': qd}) \
      + THETA*dot(grad(T), grad(v_6))*dx(metadata={'quadrature_degree': qd})
 # dUdt_0 = dfb_deta(Constant(0.0), eta_0, mu_0)*detadt_0 + dfb_dmu(Constant(0.0), eta_0, mu_0)*dmudt_0
 # dTdt_0 = project((ECHARGE*((j_hx0 - j_ex0)**2/(nd_e0*MEA + nd_h0*MHA) + (j_hy0 - j_ey0)**2/(nd_e0*MEC + nd_h0*MHC)) - dUdt_0 - (HTRAN/Lz_do)*(T_0 - Ts))/CPV, V1)
+if meshdim == 2:
+    FT_bdr = (HTRAN/Lz)*(T - Ts)*v_6*dx(metadata={'quadrature_degree': qd})
+else:
+    FT_bdr = HTRAN*(T - Ts)*v_6*ds(2, metadata={'quadrature_degree': qd})
 
 # Define nonstandard boundary conditions using Lagrange multiplier
 # Fbc_e = ((gamma_e*KB*T + CHI*mu**2/2 - CHP_IN)*v_7 \
@@ -765,7 +774,7 @@ Fbc_phi_Nitsche = -1.0/epsilon*(phi + Resistor*integral_phi - delVr \
                   + (integral_phi - Lx * Lz * Jy)*v_10*ds(0, metadata={'quadrature_degree': qd})
 # dintegralphidt_0 = project(Constant(0.0), VR)
 
-F = Feta + Fmu + Fe + Fh + Fphi + FT + Fbc_e_Nitsche + Fbc_h_Nitsche + Fbc_phi_Nitsche
+F = Feta + Fmu + Fe + Fh + Fphi + FT + FT_bdr + Fbc_e_Nitsche + Fbc_h_Nitsche + Fbc_phi_Nitsche
 
 # Gateaux derivative in direction of du (variational form for solving for Jacobian of F)
 Jac = derivative(F, u, du)
