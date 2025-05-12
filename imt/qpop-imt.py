@@ -529,11 +529,12 @@ class BoundaryY1(SubDomain):
 by1 = BoundaryY1()
 by1.mark(boundary_markers, 1)   # 1 marks y = Ly boundary
 
-class BoundaryZ0(SubDomain):
-    def inside(self, x, on_boundary):
-        return on_boundary and near(x[2], 0)
-bz0 = BoundaryZ0()
-bz0.mark(boundary_markers, 2)   # 2 marks z = 0 boundary
+if meshdim == 3:
+    class BoundaryZ0(SubDomain):
+        def inside(self, x, on_boundary):
+            return on_boundary and near(x[2], 0)
+    bz0 = BoundaryZ0()
+    bz0.mark(boundary_markers, 2)   # 2 marks z = 0 boundary
 
 ds = Measure('ds', domain=mesh, subdomain_data=boundary_markers)  # Measure ds
 
