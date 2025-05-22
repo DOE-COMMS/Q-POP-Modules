@@ -343,7 +343,7 @@ else:
     delV_i = phi_i.value / Vfrac_i
 
 delVr = PhysParam(delV_i)   # This is the ramping voltage
-integral_phi_i = PhysParam(phi_i.value / RVO2_i / Lz.value)
+Ib_i = PhysParam(phi_i.value / RVO2_i)
 # print('!!!!!!!!!!!!! Vfrac_i = ', Vfrac_i, '!!!!!!!!!!!!!', flush=True)
 
 # Ramp up delV
@@ -393,8 +393,8 @@ u = Function(V)     # The most recently computed solution
 u_n = Function(V)  # The previous solution
 
 # Split system functions to access components
-eta, mu, gamma_e, gamma_h, phi, T, integral_phi = split(u)
-eta_n, mu_n, gamma_en, gamma_hn, phi_n, T_n, integral_phin = split(u_n)
+eta, mu, gamma_e, gamma_h, phi, T, Ib = split(u)
+eta_n, mu_n, gamma_en, gamma_hn, phi_n, T_n, Ib_n = split(u_n)
 
 #------------------------------------------------------
 # Assign initial values to the functions u_n and initial
@@ -409,7 +409,7 @@ T_0 = project(T_i, V1)
 # lam_10 = project(Constant(0), V1)
 # lam_20 = project(Constant(0), V1)
 # lam_30 = project(Constant(0), V1)
-integral_phi_0 = project(integral_phi_i, VR)
+Ib_0 = project(Ib_i, VR)
 
 # lam_1n = project(Expression('x[1]>=tol && Ly-x[1]>=tol ? 0.0 : 0.1', \
 #                             degree=1, tol=tol, Ly=Ly), V1)
@@ -419,7 +419,7 @@ integral_phi_0 = project(integral_phi_i, VR)
 #                             degree=1, tol=tol), V1)
 
 fa = FunctionAssigner(V, [V1,V1,V1,V1,V1,V1,VR])
-fa.assign(u_n, [eta_0, mu_0, gamma_e0, gamma_h0, phi_0, T_0, integral_phi_0])
+fa.assign(u_n, [eta_0, mu_0, gamma_e0, gamma_h0, phi_0, T_0, Ib_0])
 u.assign(u_n)
 
 # Set the Tc variation.
@@ -770,9 +770,9 @@ Fbc_e_Nitsche = -1.0/epsilon*(gamma_e*KB*T +CHI*mu**2/2 - CHP_IN )*v_3*ds(0, met
                 -1.0/epsilon*(gamma_e*KB*T +CHI*mu**2/2 - CHP_IN )*v_3*ds(1, metadata={'quadrature_degree': qd})
 Fbc_h_Nitsche = -1.0/epsilon*(gamma_h*KB*T +CHI*mu**2/2 + CHP_IN )*v_4*ds(0, metadata={'quadrature_degree': qd}) \
                 -1.0/epsilon*(gamma_h*KB*T +CHI*mu**2/2 + CHP_IN )*v_4*ds(1, metadata={'quadrature_degree': qd})
-Fbc_phi_Nitsche = -1.0/epsilon*(phi + Resistor*integral_phi - delVr \
+Fbc_phi_Nitsche = -1.0/epsilon*(phi + Resistor*Ib - delVr \
                                 + (Resistor*Capacitor)*(phi - phi_n)/dt)*v_5*ds(0, metadata={'quadrature_degree': qd}) \
-                  + (integral_phi - Lx * Lz * Jy)*v_10*ds(0, metadata={'quadrature_degree': qd})
+                  + (Ib - Lx * Lz * Jy)*v_10*ds(0, metadata={'quadrature_degree': qd})
 # dintegralphidt_0 = project(Constant(0.0), VR)
 
 F = Feta + Fmu + Fe + Fh + Fphi + FT + FT_bdr + Fbc_e_Nitsche + Fbc_h_Nitsche + Fbc_phi_Nitsche
@@ -806,7 +806,7 @@ nd_heq_pc = NV*Fermi_b((-CHI*mu**2/2 - ECHARGE*phi - CHP_IN)/(KB*T_n))
 # j_ey_pcpnp = -nd_e*MEC/ECHARGE*(KB*T_n*gamma_e.dx(1) + gamma_e*KB*T_n.dx(1) \
 #                           + CHI*mu*mu.dx(1) - ECHARGE*phi.dx(1))
 # j_e_pcpnp = as_vector([j_ex_pcpnp, j_ey_pcpnp])  
-j_e_pcpnp = -nd_e*(ME/ECHARGE)*(KB*T_n*gamma_e + CHI*mu*mu/2.0 - ECHARGE*phi)
+j_e_pcpnp = -nd_e*(ME/ECHARGE)*grad(KB*T_n*gamma_e + CHI*mu*mu/2.0 - ECHARGE*phi)
 Fe_pc = (NC*dFermi(gamma_e)*(gamma_e - gamma_en)/dt \
       - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_3*dx(metadata={'quadrature_degree': qd}) - dot(j_e_pcpnp, grad(v_3))*dx(metadata={'quadrature_degree': qd}) \
         -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(0,metadata={'quadrature_degree': qd}) \
@@ -818,7 +818,7 @@ Fe_pc = (NC*dFermi(gamma_e)*(gamma_e - gamma_en)/dt \
 # j_hy_pcpnp = -nd_h*MHC/ECHARGE*(KB*T_n*gamma_h.dx(1) + gamma_h*KB*T_n.dx(1) \
 #                           + CHI*mu*mu.dx(1) + ECHARGE*phi.dx(1))
 # j_h_pcpnp = as_vector([j_hx_pcpnp, j_hy_pcpnp]) 
-j_h_pcpnp = -nd_h*(MH/ECHARGE)*(KB*T_n*gamma_h + CHI*mu*mu/2.0 + ECHARGE*phi)
+j_h_pcpnp = -nd_h*(MH/ECHARGE)*grad(KB*T_n*gamma_h + CHI*mu*mu/2.0 + ECHARGE*phi)
 Fh_pc = (NV*dFermi(gamma_h)*(gamma_h - gamma_hn)/dt \
         - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_4*dx(metadata={'quadrature_degree': qd}) - dot(j_h_pcpnp, grad(v_4))*dx(metadata={'quadrature_degree': qd}) \
         - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(0, metadata={'quadrature_degree': qd}) \
@@ -826,9 +826,9 @@ Fh_pc = (NV*dFermi(gamma_h)*(gamma_h - gamma_hn)/dt \
 
 #phi
 Jy_pcpnp =ECHARGE*(j_h_pcpnp[1] - j_e_pcpnp[1]) 
-Fbc_phi_Nitsche_pc = -1.0/epsilon*(phi + Resistor*integral_phi - delVr \
+Fbc_phi_Nitsche_pc = -1.0/epsilon*(phi + Resistor*Ib - delVr \
                                 + (Resistor*Capacitor)*(phi - phi_n)/dt)*v_5*ds(0, metadata={'quadrature_degree': qd}) \
-                  + (integral_phi - Lx * Lz * Jy_pcpnp)*v_10*ds(0, metadata={'quadrature_degree': qd})
+                  + (Ib - Lx * Lz * Jy_pcpnp)*v_10*ds(0, metadata={'quadrature_degree': qd})
 
 Fphi_pc = dot(grad(phi), grad(v_5))*dx(metadata={'quadrature_degree': qd}) - (ECHARGE/PERMITTIVITY)*(nd_h - nd_e)*v_5*dx(metadata={'quadrature_degree': qd}) \
         + Fbc_phi_Nitsche_pc 
