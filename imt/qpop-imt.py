@@ -131,7 +131,7 @@ MUNIT = EUNIT*(TUNIT/LUNIT)**2
 RUNIT = VUNIT/(CUNIT/TUNIT)
 
 
-intree = ET.parse('input.xml')
+intree = ET.parse('examples/input.xml')
 inroot = intree.getroot()
 #-----------------------------------------------
 # Define parameters for geometry and time
@@ -191,6 +191,7 @@ use_GS_block_preconditioner.read(inroot, 'solverparameters/useGSblockpreconditio
 
 directsolver = Parameter('superlu_dist')
 directsolver.read(inroot, 'solverparameters/directsolver', comm=comm, rank=rank)
+print('User message ===> Using direct solver:', directsolver.value, flush=True)
 fenicslog = Parameter('INFO')
 fenicslog.read(inroot, 'solverparameters/loglevel', comm=comm, rank=rank)
 
@@ -836,7 +837,7 @@ def solve4dt(t):
     # problem = NonlinearVariationalProblem(F, u, bcs, Jac)
     # solver = NonlinearVariationalSolver(problem)
 
-    if use_GS_block_preconditioner: 
+    if use_GS_block_preconditioner.value: 
         num, converged = solver.solve(problem, u.vector())    
     else:
         num, converged = solver.solve()   # Return whether the solver converges
