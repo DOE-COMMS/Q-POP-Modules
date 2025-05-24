@@ -131,7 +131,7 @@ MUNIT = EUNIT*(TUNIT/LUNIT)**2
 RUNIT = VUNIT/(CUNIT/TUNIT)
 
 
-intree = ET.parse('examples/input.xml')
+intree = ET.parse('input.xml')
 inroot = intree.getroot()
 #-----------------------------------------------
 # Define parameters for geometry and time
