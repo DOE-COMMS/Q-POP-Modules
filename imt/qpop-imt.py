@@ -193,6 +193,7 @@ use_GS_block_preconditioner.read(inroot, 'solverparameters/useGSblockpreconditio
 
 directsolver = Parameter('superlu_dist')
 directsolver.read(inroot, 'solverparameters/directsolver', comm=comm, rank=rank)
+print('User message ===> Using direct solver:', directsolver.value, flush=True)
 fenicslog = Parameter('INFO')
 fenicslog.read(inroot, 'solverparameters/loglevel', comm=comm, rank=rank)
 
