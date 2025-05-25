@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<input>
+ <external>
+  <temperature unit='K'>300.0</temperature>  <!-- Changed from 240.0 to 330.0 with an increment of 10.0 -->
+  <voltage unit='V'>0.0</voltage>
+  <resistor unit='Ohm'>5e5</resistor>
+  <capacitor unit='nF'>0.0</capacitor>
+  <heatdiss unit='W/m^2K'>3e6</heatdiss>
+  <Lx unit='nm' mesh='20'>20.0</Lx>
+  <Ly unit='nm' mesh='20'>20.0</Ly>
+  <Lz unit='nm'>20.0</Lz>
+ </external>
+ <time>
+  <endtime unit='ns'>2e3</endtime>
+  <savemethod>auto</savemethod>
+  <saveperiod>20</saveperiod>
+ </time>
+ <initialization>
+  <temperature unit='K'>300.0</temperature>  <!-- Changed from 240.0 to 330.0 with an increment of 10.0 -->
+  <voltage unit='V'>0.0</voltage>
+  <SOP>0.1</SOP>
+  <EOP>-0.1</EOP>
+  <Tcvariance method='nucleus1'>
+   <Tcshift unit='K'>0.0</Tcshift>
+   <radius unit='nm'>3.0</radius>
+  </Tcvariance>
+ </initialization>
+ <solverparameters>
+  <Newtonabsolutetolerance>1e-5</Newtonabsolutetolerance>
+  <Newtonrelativetolerance>1e-3</Newtonrelativetolerance>
+  <Newtonmaxiteration>15</Newtonmaxiteration>
+  <timesteptolerance>1e-2</timesteptolerance>
+  <directsolver>mumps</directsolver>
+  <useGSblockpreconditioner>0</useGSblockpreconditioner>
+  <loglevel>INFO</loglevel>
+ </solverparameters>
+</input>

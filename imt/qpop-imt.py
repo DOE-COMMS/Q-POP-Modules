@@ -146,6 +146,8 @@ ny = Parameter(20)   # 32
 ny.read(inroot, 'external/Ly.mesh', comm=comm, rank=rank)
 Lz = PhysParam(36e-9/LUNIT)
 Lz.read(inroot, 'external/Lz', unit=LUNIT/1e-9, comm=comm, rank=rank)
+nz = Parameter(1)  # 1 to indicate the system is 2D
+nz.read(inroot, 'external/Lz.mesh', comm=comm, rank=rank)
 
 tf = Parameter(5000e-9/TUNIT)         # Final time in nanoseconds  5000.0
 tf.read(inroot, 'time/endtime', unit=TUNIT/1e-9, comm=comm, rank=rank)
@@ -249,10 +251,14 @@ MEC = PhysParam(5e-5/LUNIT**2*VUNIT*TUNIT)
 MEC.read(inroot, 'internal/elecmobilityy', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
 MEA = PhysParam(MEC.value*0.5)
 MEA.read(inroot, 'internal/elecmobilityx', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
+MEB = PhysParam(MEA.value)
+MEB.read(inroot, 'internal/elecmobilityz', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
 MHC = PhysParam(MEC.value/1.2)
 MHC.read(inroot, 'internal/holemobilityy', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
 MHA = PhysParam(MHC.value*0.5)
 MHA.read(inroot, 'internal/holemobilityx', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
+MHB = PhysParam(MHA.value)
+MHB.read(inroot, 'internal/holemobilityz', unit=LUNIT**2/(VUNIT*TUNIT*1e-4), comm=comm, rank=rank)
 KEH0 = PhysParam(1.0/( 2 * math.sqrt(NC.value*NV.value)*math.exp(-CHI.value*0.827987**2/(KB.value*322.0/TEMPUNIT)) * (14.235e-6/TUNIT) ))  # 1.0/( 2 * math.sqrt(NC*NV)*math.exp(-CHI/(2*KB*TC)) * (14e-6/TUNIT) )
 KEH0.read(inroot, 'internal/ehrecrate', unit=(1e-9/TUNIT)/UCVOL.value, comm=comm, rank=rank)
 rel_perm = PhysParam(60.0)
@@ -338,7 +344,7 @@ else:
     delV_i = phi_i.value / Vfrac_i
 
 delVr = PhysParam(delV_i)   # This is the ramping voltage
-integral_phi_i = PhysParam(phi_i.value / RVO2_i / Lz.value)
+Ib_i = PhysParam(phi_i.value / RVO2_i)
 # print('!!!!!!!!!!!!! Vfrac_i = ', Vfrac_i, '!!!!!!!!!!!!!', flush=True)
 
 # Ramp up delV
@@ -354,14 +360,21 @@ comm.Barrier()
 #----------------------------------------------------
 # Generate mesh
 #----------------------------------------------------
-mesh = RectangleMesh(Point(0, 0), Point(Lx.value, Ly.value), nx.value, ny.value, 'crossed')
+if nz.value < 2:
+    mesh = RectangleMesh(Point(0, 0), Point(Lx.value, Ly.value), nx.value, ny.value, 'crossed')
+    cell_type = triangle
+    vol = Lx.value * Ly.value
+else:
+    mesh = BoxMesh(Point(0, 0, 0), Point(Lx.value, Ly.value, Lz.value), nx.value, ny.value, nz.value)
+    cell_type = tetrahedron
+    vol = Lx.value * Ly.value * Lz.value
 meshdim = mesh.topology().dim()
 
 #--------------------------------------------------------------
 # Define function space and functions for multiple variables
 #--------------------------------------------------------------
-P1 = FiniteElement('Lagrange', triangle, 1)
-R0 = FiniteElement('R', triangle, 0)
+P1 = FiniteElement('Lagrange', cell_type, 1)
+R0 = FiniteElement('R', cell_type, 0)
 V1 = FunctionSpace(mesh, P1)
 VR = FunctionSpace(mesh, R0)
 
@@ -385,8 +398,8 @@ u = Function(V)     # The most recently computed solution
 u_n = Function(V)  # The previous solution
 
 # Split system functions to access components
-eta, mu, gamma_e, gamma_h, phi, T, integral_phi = split(u)
-eta_n, mu_n, gamma_en, gamma_hn, phi_n, T_n, integral_phin = split(u_n)
+eta, mu, gamma_e, gamma_h, phi, T, Ib = split(u)
+eta_n, mu_n, gamma_en, gamma_hn, phi_n, T_n, Ib_n = split(u_n)
 
 #------------------------------------------------------
 # Assign initial values to the functions u_n and initial
@@ -401,7 +414,7 @@ T_0 = project(T_i, V1)
 # lam_10 = project(Constant(0), V1)
 # lam_20 = project(Constant(0), V1)
 # lam_30 = project(Constant(0), V1)
-integral_phi_0 = project(integral_phi_i, VR)
+Ib_0 = project(Ib_i, VR)
 
 # lam_1n = project(Expression('x[1]>=tol && Ly-x[1]>=tol ? 0.0 : 0.1', \
 #                             degree=1, tol=tol, Ly=Ly), V1)
@@ -411,7 +424,7 @@ integral_phi_0 = project(integral_phi_i, VR)
 #                             degree=1, tol=tol), V1)
 
 fa = FunctionAssigner(V, [V1,V1,V1,V1,V1,V1,VR])
-fa.assign(u_n, [eta_0, mu_0, gamma_e0, gamma_h0, phi_0, T_0, integral_phi_0])
+fa.assign(u_n, [eta_0, mu_0, gamma_e0, gamma_h0, phi_0, T_0, Ib_0])
 u.assign(u_n)
 
 # Set the Tc variation.
@@ -484,8 +497,12 @@ if Tcvarmethod.value == 'random':
 
 elif Tcvarmethod.value == 'nucleus1':
     # Set a small region of impurity where the transition temperature is lower than pristine case
-    Tcvar = Expression('TCIMP0*(-tanh(2*(sqrt(pow(x[0] - Lx/2, 2) + pow(x[1], 2)) - RIMPDIS)/DWWIDTH) + 1)/2', \
-                       degree=1, Lx=Lx.value, TCIMP0=TCIMP0.value, RIMPDIS=RIMPDIS.value, DWWIDTH=10e-9/LUNIT)
+    if meshdim == 2:
+        Tcvar = Expression('TCIMP0*(-tanh(2*(sqrt(pow(x[0] - Lx/2, 2) + pow(x[1], 2)) - RIMPDIS)/DWWIDTH) + 1)/2', \
+                           degree=1, Lx=Lx.value, TCIMP0=TCIMP0.value, RIMPDIS=RIMPDIS.value, DWWIDTH=10e-9/LUNIT)
+    else:
+        Tcvar = Expression('TCIMP0*(-tanh(2*(sqrt(pow(x[0] - Lx/2, 2) + pow(x[1], 2) + pow(x[2] - Lz/2, 2)) - RIMPDIS)/DWWIDTH) + 1)/2', \
+                           degree=1, Lx=Lx.value, Lz=Lz.value, TCIMP0=TCIMP0.value, RIMPDIS=RIMPDIS.value, DWWIDTH=10e-9/LUNIT)
 else:
     # Set a small region of impurity where the transition temperature is lower than pristine case
     Tcvar = Expression('TCIMP0*(-tanh(2*(sqrt(pow(x[0] - Lx/2, 2) + pow(x[1], 2) + bump*(x[0] - Lx/2)*x[1]) - RIMPDIS)/DWWIDTH) + 1)/2', \
@@ -505,21 +522,28 @@ comm.Barrier()
 boundary_markers = MeshFunction('size_t', mesh, meshdim - 1)
 boundary_markers.set_all(9)
 
-class BoundaryX0(SubDomain):
+class BoundaryY0(SubDomain):
     def inside(self, x, on_boundary):
         return on_boundary and near(x[1], 0)
-bx0 = BoundaryX0()
-bx0.mark(boundary_markers, 0)   # 0 marks y = 0 boundary
+by0 = BoundaryY0()
+by0.mark(boundary_markers, 0)   # 0 marks y = 0 boundary
 
-class BoundaryX1(SubDomain):
+class BoundaryY1(SubDomain):
     def inside(self, x, on_boundary):
         return on_boundary and near(x[1], Ly.value)
-bx1 = BoundaryX1()
-bx1.mark(boundary_markers, 1)   # 1 marks y = Ly boundary
+by1 = BoundaryY1()
+by1.mark(boundary_markers, 1)   # 1 marks y = Ly boundary
+
+if meshdim == 3:
+    class BoundaryZ0(SubDomain):
+        def inside(self, x, on_boundary):
+            return on_boundary and near(x[2], 0)
+    bz0 = BoundaryZ0()
+    bz0.mark(boundary_markers, 2)   # 2 marks z = 0 boundary
 
 ds = Measure('ds', domain=mesh, subdomain_data=boundary_markers)  # Measure ds
 
-bc_phi_1 = DirichletBC(V.sub(4), Constant(0), bx1)  # Dirichlet boundary condition for phi
+bc_phi_1 = DirichletBC(V.sub(4), Constant(0), by1)  # Dirichlet boundary condition for phi
 
 # def domain_lam_1_2(x):
 #     return x[1] > tol and x[1] < Ly - tol
@@ -584,11 +608,13 @@ nd_h = NV*Fermi(gamma_h)    # Hole density
 # nd_en = NC*Fermi_b(gamma_en)    # Electron density
 # nd_hn = NV*Fermi_b(gamma_hn)    # Hole density
 
-j_ex = -nd_e*(MEA/ECHARGE)*(KB*T*gamma_e.dx(0) + gamma_e*KB*T.dx(0) \
-                          + CHI*mu*mu.dx(0) - ECHARGE*phi.dx(0))
-j_ey = -nd_e*(MEC/ECHARGE)*(KB*T*gamma_e.dx(1) + gamma_e*KB*T.dx(1) \
-                          + CHI*mu*mu.dx(1) - ECHARGE*phi.dx(1))
-j_e = as_vector([j_ex, j_ey])   # Electron flux
+if meshdim == 2:
+    ME = as_matrix([[MEA, 0], [0, MEC]])
+    MH = as_matrix([[MHA, 0], [0, MHC]])
+else:
+    ME = as_matrix([[MEA, 0, 0], [0, MEC, 0], [0, 0, MEB]])
+    MH = as_matrix([[MHA, 0, 0], [0, MHC, 0], [0, 0, MHB]])
+j_e = -nd_e*(ME/ECHARGE)*grad(KB*T*gamma_e + CHI*mu*mu/2.0 - ECHARGE*phi)  # Electron flux
 # Corresponding initial values
 # j_ex0 = -nd_e0*(MEA/ECHARGE)*(KB*T_0*gamma_e0.dx(0) + gamma_e0*KB*T_0.dx(0) \
 #                           + CHI*mu_0*mu_0.dx(0) - ECHARGE*phi_0.dx(0))
@@ -601,13 +627,7 @@ j_e = as_vector([j_ex, j_ey])   # Electron flux
 #                           + CHI*mu_n*mu_n.dx(1) - ECHARGE*phi.dx(1))
 # j_en = as_vector([j_exn, j_eyn])   # Electron flux
 
-
-
-j_hx = -nd_h*(MHA/ECHARGE)*(KB*T*gamma_h.dx(0) + gamma_h*KB*T.dx(0) \
-                          + CHI*mu*mu.dx(0) + ECHARGE*phi.dx(0))
-j_hy = -nd_h*(MHC/ECHARGE)*(KB*T*gamma_h.dx(1) + gamma_h*KB*T.dx(1) \
-                          + CHI*mu*mu.dx(1) + ECHARGE*phi.dx(1))
-j_h = as_vector([j_hx, j_hy])   # Hole flux
+j_h = -nd_h*(MH/ECHARGE)*grad(KB*T*gamma_h + CHI*mu*mu/2.0 + ECHARGE*phi)  # Hole flux
 # Corresponding initial values
 # j_hx0 = -nd_h0*(MHA/ECHARGE)*(KB*T_0*gamma_h0.dx(0) + gamma_h0*KB*T_0.dx(0) \
 #                           + CHI*mu_0*mu_0.dx(0) + ECHARGE*phi_0.dx(0))
@@ -620,9 +640,9 @@ j_h = as_vector([j_hx, j_hy])   # Hole flux
 #                           + CHI*mu_n*mu_n.dx(1) + ECHARGE*phi.dx(1))
 # j_hn = as_vector([j_hxn, j_hyn])   # Hole flux
 
-nd_in = NC*Fermi(-(CHI*mu**2/2 - CHP_IN)/(KB*T))   # Intrinsic carrier density
-nd_eeq = NC*Fermi(-(CHI*mu**2/2 - ECHARGE*phi - CHP_IN)/(KB*T))  # Equilibrium electron density
-nd_heq = NV*Fermi(-(CHI*mu**2/2 + ECHARGE*phi + CHP_IN)/(KB*T))  # Equilibrium hole density
+nd_in = NC*Fermi(-(CHI*mu*mu/2 - CHP_IN)/(KB*T))   # Intrinsic carrier density
+nd_eeq = NC*Fermi(-(CHI*mu*mu/2 - ECHARGE*phi - CHP_IN)/(KB*T))  # Equilibrium electron density
+nd_heq = NV*Fermi(-(CHI*mu*mu/2 + ECHARGE*phi + CHP_IN)/(KB*T))  # Equilibrium hole density
 # nd_in0 = NC*Fermi(-(CHI*mu_0**2/2 - CHP_IN)/(KB*T_0))   #  Corresponding initial values
 # nd_eeq0 = NC*Fermi(-(CHI*mu_0**2/2 - ECHARGE*phi_0 - CHP_IN)/(KB*T_0))  
 # nd_heq0 = NV*Fermi(-(CHI*mu_0**2/2 + ECHARGE*phi_0 + CHP_IN)/(KB*T_0)) 
@@ -631,7 +651,7 @@ nd_heq = NV*Fermi(-(CHI*mu**2/2 + ECHARGE*phi + CHP_IN)/(KB*T))  # Equilibrium h
 # nd_eeqn = NC*Fermi_b((-CHI*mu_n**2/2 + ECHARGE*phi + CHP_IN)/(KB*T_n))  # Equilibrium electron density
 # nd_heqn = NV*Fermi_b((-CHI*mu_n**2/2 - ECHARGE*phi - CHP_IN)/(KB*T_n))  # Equilibrium hole density
 
-Jy = ECHARGE*(j_hy - j_ey)    # y component of the total current
+Jy = ECHARGE*(j_h[1] - j_e[1])    # y component of the total current
 # Jy_n = ECHARGE*(j_hyn - j_eyn)    # y component of the total current
 
 
@@ -697,14 +717,19 @@ Fphi = dot(grad(phi), grad(v_5))*dx(metadata={'quadrature_degree': qd}) - (ECHAR
 # Fphi = PERMITTIVITY*dot(grad(phi), grad(v_5))*dx - ECHARGE*(nd_h - nd_e)*v_5*dx - PERMITTIVITY*delV/Constant(Ly)*v_5*ds(0)
 # dphidt_0 = project(Constant(0.0), V1)
 
+# ufl's inv function is a hardcoded symbolic expression for the matrix inverse. Therefore, this is limited to 1x1, 2x2 and 3x3 matrices.
 FT = (CPV*(T - T_n)/dt \
-      - ECHARGE*((j_hx - j_ex)**2/(nd_e*MEA + nd_h*MHA) \
-                 + (j_hy - j_ey)**2/(nd_e*MEC + nd_h*MHC)) \
-      + dUdt \
-      + (HTRAN/Lz)*(T - Ts))*v_6*dx(metadata={'quadrature_degree': qd}) \
+      # - ECHARGE*((j_hx - j_ex)**2/(nd_e*MEA + nd_h*MHA) \
+      #            + (j_hy - j_ey)**2/(nd_e*MEC + nd_h*MHC)) \
+      - ECHARGE * dot(j_h - j_e, inv(nd_e*ME + nd_h*MH)*(j_h - j_e)) \
+      + dUdt)*v_6*dx(metadata={'quadrature_degree': qd}) \
      + THETA*dot(grad(T), grad(v_6))*dx(metadata={'quadrature_degree': qd})
 # dUdt_0 = dfb_deta(Constant(0.0), eta_0, mu_0)*detadt_0 + dfb_dmu(Constant(0.0), eta_0, mu_0)*dmudt_0
 # dTdt_0 = project((ECHARGE*((j_hx0 - j_ex0)**2/(nd_e0*MEA + nd_h0*MHA) + (j_hy0 - j_ey0)**2/(nd_e0*MEC + nd_h0*MHC)) - dUdt_0 - (HTRAN/Lz_do)*(T_0 - Ts))/CPV, V1)
+if meshdim == 2:
+    FT_bdr = (HTRAN/Lz)*(T - Ts)*v_6*dx(metadata={'quadrature_degree': qd})
+else:
+    FT_bdr = HTRAN*(T - Ts)*v_6*ds(2, metadata={'quadrature_degree': qd})
 
 # Define nonstandard boundary conditions using Lagrange multiplier
 # Fbc_e = ((gamma_e*KB*T + CHI*mu**2/2 - CHP_IN)*v_7 \
@@ -750,12 +775,12 @@ Fbc_e_Nitsche = -1.0/epsilon*(gamma_e*KB*T +CHI*mu**2/2 - CHP_IN )*v_3*ds(0, met
                 -1.0/epsilon*(gamma_e*KB*T +CHI*mu**2/2 - CHP_IN )*v_3*ds(1, metadata={'quadrature_degree': qd})
 Fbc_h_Nitsche = -1.0/epsilon*(gamma_h*KB*T +CHI*mu**2/2 + CHP_IN )*v_4*ds(0, metadata={'quadrature_degree': qd}) \
                 -1.0/epsilon*(gamma_h*KB*T +CHI*mu**2/2 + CHP_IN )*v_4*ds(1, metadata={'quadrature_degree': qd})
-Fbc_phi_Nitsche = -1.0/epsilon*(phi + (Resistor*Lz)*integral_phi - delVr \
+Fbc_phi_Nitsche = -1.0/epsilon*(phi + Resistor*Ib - delVr \
                                 + (Resistor*Capacitor)*(phi - phi_n)/dt)*v_5*ds(0, metadata={'quadrature_degree': qd}) \
-                  + (integral_phi - Lx * Jy)*v_10*ds(0, metadata={'quadrature_degree': qd})
+                  + (Ib - Lx * Lz * Jy)*v_10*ds(0, metadata={'quadrature_degree': qd})
 # dintegralphidt_0 = project(Constant(0.0), VR)
 
-F = Feta + Fmu + Fe + Fh + Fphi + FT + Fbc_e_Nitsche + Fbc_h_Nitsche + Fbc_phi_Nitsche
+F = Feta + Fmu + Fe + Fh + Fphi + FT + FT_bdr + Fbc_e_Nitsche + Fbc_h_Nitsche + Fbc_phi_Nitsche
 
 # Gateaux derivative in direction of du (variational form for solving for Jacobian of F)
 Jac = derivative(F, u, du)
@@ -763,60 +788,61 @@ Jac = derivative(F, u, du)
 #----------------------------------------------------------
 # Define Block Gauss Seidel preconditioner weak form definition
 #----------------------------------------------------------
-
-
-#eta 
-Feta_pc = ((eta - eta_n)/dt + 2.0 * KN*dfb_deta(T_n, eta, mu))*v_1*dx(metadata={'quadrature_degree': qd}) \
-       + (KN*KAPPAN)*dot(grad(eta), grad(v_1))*dx(metadata={'quadrature_degree': qd}) \
-       - (KN*KAPPAN/deff)*(etas - eta)*v_1*ds(metadata={'quadrature_degree': qd})   # Boundary condition: interact with surroundings having an effective order parameter of etas
-
-#mu 
-nd_e_pc = NC*Fermi_b(gamma_en)    # Electron density
-nd_h_pc = NV*Fermi_b(gamma_hn) 
-nd_in_pc = NC*Fermi_b((-CHI*mu**2/2 + CHP_IN)/(KB*T_n)) # contain only mu,T
-Fmu_pc = ((mu - mu_n)/dt + 2.0 * KU*(dfb_dmu(T_n, eta, mu) \
-       + CHI*mu*(nd_e_pc + nd_h_pc - 2*nd_in_pc)))*v_2*dx(metadata={'quadrature_degree': qd}) + (KU*KAPPAU)*dot(grad(mu), grad(v_2))*dx(metadata={'quadrature_degree': qd}) \
-      - (KU*KAPPAU/deff)*(mus - mu)*v_2*ds(metadata={'quadrature_degree': qd})  # Boundary condition: interact with surroundings having an effective order parameter of mus
-
-#gamma_e
-nd_eeq_pc = NC*Fermi_b((-CHI*mu**2/2 + ECHARGE*phi + CHP_IN)/(KB*T_n))
-nd_heq_pc = NV*Fermi_b((-CHI*mu**2/2 - ECHARGE*phi - CHP_IN)/(KB*T_n)) 
-j_ex_pcpnp = -nd_e*MEA/ECHARGE*(KB*T_n*gamma_e.dx(0) + gamma_e*KB*T_n.dx(0) \
-                          + CHI*mu*mu.dx(0) - ECHARGE*phi.dx(0))
-j_ey_pcpnp = -nd_e*MEC/ECHARGE*(KB*T_n*gamma_e.dx(1) + gamma_e*KB*T_n.dx(1) \
-                          + CHI*mu*mu.dx(1) - ECHARGE*phi.dx(1))
-j_e_pcpnp = as_vector([j_ex_pcpnp, j_ey_pcpnp])  
-Fe_pc = (NC*dFermi(gamma_e)*(gamma_e - gamma_en)/dt \
-      - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_3*dx(metadata={'quadrature_degree': qd}) - dot(j_e_pcpnp, grad(v_3))*dx(metadata={'quadrature_degree': qd}) \
-        -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(0,metadata={'quadrature_degree': qd}) \
-        -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(1,metadata={'quadrature_degree': qd})
-
-#gamma_h
-j_hx_pcpnp = -nd_h*MHA/ECHARGE*(KB*T_n*gamma_h.dx(0) + gamma_h*KB*T_n.dx(0) \
-                          + CHI*mu*mu.dx(0) + ECHARGE*phi.dx(0))
-j_hy_pcpnp = -nd_h*MHC/ECHARGE*(KB*T_n*gamma_h.dx(1) + gamma_h*KB*T_n.dx(1) \
-                          + CHI*mu*mu.dx(1) + ECHARGE*phi.dx(1))
-j_h_pcpnp = as_vector([j_hx_pcpnp, j_hy_pcpnp]) 
-Fh_pc = (NV*dFermi(gamma_h)*(gamma_h - gamma_hn)/dt \
-        - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_4*dx(metadata={'quadrature_degree': qd}) - dot(j_h_pcpnp, grad(v_4))*dx(metadata={'quadrature_degree': qd}) \
-        - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(0, metadata={'quadrature_degree': qd}) \
-        - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(1, metadata={'quadrature_degree': qd})
-
-#phi
-Jy_pcpnp =ECHARGE*(j_hy_pcpnp - j_ey_pcpnp) 
-Fbc_phi_Nitsche_pc = -1.0/epsilon*(phi + (Resistor*Lz)*integral_phi - delVr \
-                                + (Resistor*Capacitor)*(phi - phi_n)/dt)*v_5*ds(0, metadata={'quadrature_degree': qd}) \
-                  + (integral_phi - Lx * Jy_pcpnp)*v_10*ds(0, metadata={'quadrature_degree': qd})
-
-Fphi_pc = dot(grad(phi), grad(v_5))*dx(metadata={'quadrature_degree': qd}) - (ECHARGE/PERMITTIVITY)*(nd_h - nd_e)*v_5*dx(metadata={'quadrature_degree': qd}) \
-        + Fbc_phi_Nitsche_pc 
- 
- # T 
-FT_pc = FT
-
-F_pc = Feta_pc + Fmu_pc + Fe_pc + Fh_pc + Fphi_pc + FT_pc 
-
-Jac_pc = derivative(F_pc,u,du) 
+if use_GS_block_preconditioner.value:
+    #eta 
+    Feta_pc = ((eta - eta_n)/dt + 2.0 * KN*dfb_deta(T_n, eta, mu))*v_1*dx(metadata={'quadrature_degree': qd}) \
+           + (KN*KAPPAN)*dot(grad(eta), grad(v_1))*dx(metadata={'quadrature_degree': qd}) \
+           - (KN*KAPPAN/deff)*(etas - eta)*v_1*ds(metadata={'quadrature_degree': qd})   # Boundary condition: interact with surroundings having an effective order parameter of etas
+    
+    #mu 
+    nd_e_pc = NC*Fermi_b(gamma_en)    # Electron density
+    nd_h_pc = NV*Fermi_b(gamma_hn) 
+    nd_in_pc = NC*Fermi_b((-CHI*mu**2/2 + CHP_IN)/(KB*T_n)) # contain only mu,T
+    Fmu_pc = ((mu - mu_n)/dt + 2.0 * KU*(dfb_dmu(T_n, eta, mu) \
+           + CHI*mu*(nd_e_pc + nd_h_pc - 2*nd_in_pc)))*v_2*dx(metadata={'quadrature_degree': qd}) + (KU*KAPPAU)*dot(grad(mu), grad(v_2))*dx(metadata={'quadrature_degree': qd}) \
+          - (KU*KAPPAU/deff)*(mus - mu)*v_2*ds(metadata={'quadrature_degree': qd})  # Boundary condition: interact with surroundings having an effective order parameter of mus
+    
+    #gamma_e
+    nd_eeq_pc = NC*Fermi_b((-CHI*mu**2/2 + ECHARGE*phi + CHP_IN)/(KB*T_n))
+    nd_heq_pc = NV*Fermi_b((-CHI*mu**2/2 - ECHARGE*phi - CHP_IN)/(KB*T_n)) 
+    # j_ex_pcpnp = -nd_e*MEA/ECHARGE*(KB*T_n*gamma_e.dx(0) + gamma_e*KB*T_n.dx(0) \
+    #                           + CHI*mu*mu.dx(0) - ECHARGE*phi.dx(0))
+    # j_ey_pcpnp = -nd_e*MEC/ECHARGE*(KB*T_n*gamma_e.dx(1) + gamma_e*KB*T_n.dx(1) \
+    #                           + CHI*mu*mu.dx(1) - ECHARGE*phi.dx(1))
+    # j_e_pcpnp = as_vector([j_ex_pcpnp, j_ey_pcpnp])  
+    j_e_pcpnp = -nd_e*(ME/ECHARGE)*grad(KB*T_n*gamma_e + CHI*mu*mu/2.0 - ECHARGE*phi)
+    Fe_pc = (NC*dFermi(gamma_e)*(gamma_e - gamma_en)/dt \
+          - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_3*dx(metadata={'quadrature_degree': qd}) - dot(j_e_pcpnp, grad(v_3))*dx(metadata={'quadrature_degree': qd}) \
+            -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(0,metadata={'quadrature_degree': qd}) \
+            -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(1,metadata={'quadrature_degree': qd})
+    
+    #gamma_h
+    # j_hx_pcpnp = -nd_h*MHA/ECHARGE*(KB*T_n*gamma_h.dx(0) + gamma_h*KB*T_n.dx(0) \
+    #                           + CHI*mu*mu.dx(0) + ECHARGE*phi.dx(0))
+    # j_hy_pcpnp = -nd_h*MHC/ECHARGE*(KB*T_n*gamma_h.dx(1) + gamma_h*KB*T_n.dx(1) \
+    #                           + CHI*mu*mu.dx(1) + ECHARGE*phi.dx(1))
+    # j_h_pcpnp = as_vector([j_hx_pcpnp, j_hy_pcpnp]) 
+    j_h_pcpnp = -nd_h*(MH/ECHARGE)*grad(KB*T_n*gamma_h + CHI*mu*mu/2.0 + ECHARGE*phi)
+    Fh_pc = (NV*dFermi(gamma_h)*(gamma_h - gamma_hn)/dt \
+            - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_4*dx(metadata={'quadrature_degree': qd}) - dot(j_h_pcpnp, grad(v_4))*dx(metadata={'quadrature_degree': qd}) \
+            - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(0, metadata={'quadrature_degree': qd}) \
+            - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(1, metadata={'quadrature_degree': qd})
+    
+    #phi
+    Jy_pcpnp =ECHARGE*(j_h_pcpnp[1] - j_e_pcpnp[1]) 
+    Fbc_phi_Nitsche_pc = -1.0/epsilon*(phi + Resistor*Ib - delVr \
+                                    + (Resistor*Capacitor)*(phi - phi_n)/dt)*v_5*ds(0, metadata={'quadrature_degree': qd}) \
+                      + (Ib - Lx * Lz * Jy_pcpnp)*v_10*ds(0, metadata={'quadrature_degree': qd})
+    
+    Fphi_pc = dot(grad(phi), grad(v_5))*dx(metadata={'quadrature_degree': qd}) - (ECHARGE/PERMITTIVITY)*(nd_h - nd_e)*v_5*dx(metadata={'quadrature_degree': qd}) \
+            + Fbc_phi_Nitsche_pc 
+    
+     # T 
+    FT_pc = FT
+    
+    F_pc = Feta_pc + Fmu_pc + Fe_pc + Fh_pc + Fphi_pc + FT_pc 
+    
+    Jac_pc = derivative(F_pc,u,du) 
 
 #----------------------------------------------------------
 # Solve the problem and save the solution
@@ -1033,7 +1059,7 @@ else:
 
 # Write log file header. Tfail is the accumulative number of time refinement, Nfail is the accumulative number of Newton solver nonconvergence, and Terr is the final L2 error of time stepping.
 if rank == 0:
-    logfile.write(f'          #Step            Time       Time step           Tfail           Nfail      Other fail    Av. EOP norm       Av. T (K)           V (V)         R (Ohm)\n')
+    logfile.write(f'          #Step            Time       Time step           Tfail           Nfail      Other fail    Av. EOP norm    Av. SOP norm       Av. T (K)           V (V)         R (Ohm)\n')
     logfile.flush()
 
 while t < tf.value + 1e-9*tf.value:
@@ -1110,13 +1136,15 @@ while t < tf.value + 1e-9*tf.value:
             if n_out > len_t_out - 1:
                 break
             
-    mu_norm_av = math.sqrt(assemble(mu**2*dx)/(Lx.value*Ly.value))
+    mu_norm_av = math.sqrt(assemble(mu*mu*dx)/vol)
+    eta_norm_av = math.sqrt(assemble(eta*eta*dx)/vol)
     V_VO2 = assemble(phi*ds(0)) / Lx.value * VUNIT  # Calculate voltage drop across VO2
-    Tav = assemble(T*dx) / (Lx.value*Ly.value) * TEMPUNIT  # Calculate average temperature across VO2
-    R_VO2 = V_VO2 / (Lz.value*assemble(Jy*ds(0)) * CUNIT/TUNIT)  # Calculate VO2 resistance
+    Tav = assemble(T*dx) / vol * TEMPUNIT  # Calculate average temperature across VO2
+    # R_VO2 = V_VO2 / (Lz.value*assemble(Jy*ds(0)) * CUNIT/TUNIT)  # Calculate VO2 resistance
+    R_VO2 = V_VO2 / (assemble(Ib * ds(0)) / (vol / Ly.value) * CUNIT / TUNIT)
     if rank == 0:
         print(f'User message ===> Completed refinement: dt = {dt.value:15.6e}, t = {t:15.6e} --> {t+dt.value:15.6e}', flush=True)
-        logfile.write(f'{n_step:15d} {t+dt.value:15.6e} {dt.value:15.6e} {Tfail:15d} {Nfail:15d} {otherfail:15d} {mu_norm_av:15.6f} {Tav:15.6e} {V_VO2:15.6e} {R_VO2:15.6e}\n') 
+        logfile.write(f'{n_step:15d} {t+dt.value:15.6e} {dt.value:15.6e} {Tfail:15d} {Nfail:15d} {otherfail:15d} {mu_norm_av:15.6f} {eta_norm_av:15.6f} {Tav:15.6e} {V_VO2:15.6e} {R_VO2:15.6e}\n') 
         logfile.flush()
 
     dudt_n = project((u - u_n)/dt, V)
