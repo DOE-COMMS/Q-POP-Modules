@@ -361,15 +361,19 @@ comm.Barrier()
 #----------------------------------------------------
 if nz.value < 2:
     mesh = RectangleMesh(Point(0, 0), Point(Lx.value, Ly.value), nx.value, ny.value, 'crossed')
+    cell_type = triangle
+    vol = Lx.value * Ly.value
 else:
     mesh = BoxMesh(Point(0, 0, 0), Point(Lx.value, Ly.value, Lz.value), nx.value, ny.value, nz.value)
+    cell_type = tetrahedron
+    vol = Lx.value * Ly.value * Lz.value
 meshdim = mesh.topology().dim()
 
 #--------------------------------------------------------------
 # Define function space and functions for multiple variables
 #--------------------------------------------------------------
-P1 = FiniteElement('Lagrange', triangle, 1)
-R0 = FiniteElement('R', triangle, 0)
+P1 = FiniteElement('Lagrange', cell_type, 1)
+R0 = FiniteElement('R', cell_type, 0)
 V1 = FunctionSpace(mesh, P1)
 VR = FunctionSpace(mesh, R0)
 
@@ -783,62 +787,61 @@ Jac = derivative(F, u, du)
 #----------------------------------------------------------
 # Define Block Gauss Seidel preconditioner weak form definition
 #----------------------------------------------------------
-
-
-#eta 
-Feta_pc = ((eta - eta_n)/dt + 2.0 * KN*dfb_deta(T_n, eta, mu))*v_1*dx(metadata={'quadrature_degree': qd}) \
-       + (KN*KAPPAN)*dot(grad(eta), grad(v_1))*dx(metadata={'quadrature_degree': qd}) \
-       - (KN*KAPPAN/deff)*(etas - eta)*v_1*ds(metadata={'quadrature_degree': qd})   # Boundary condition: interact with surroundings having an effective order parameter of etas
-
-#mu 
-nd_e_pc = NC*Fermi_b(gamma_en)    # Electron density
-nd_h_pc = NV*Fermi_b(gamma_hn) 
-nd_in_pc = NC*Fermi_b((-CHI*mu**2/2 + CHP_IN)/(KB*T_n)) # contain only mu,T
-Fmu_pc = ((mu - mu_n)/dt + 2.0 * KU*(dfb_dmu(T_n, eta, mu) \
-       + CHI*mu*(nd_e_pc + nd_h_pc - 2*nd_in_pc)))*v_2*dx(metadata={'quadrature_degree': qd}) + (KU*KAPPAU)*dot(grad(mu), grad(v_2))*dx(metadata={'quadrature_degree': qd}) \
-      - (KU*KAPPAU/deff)*(mus - mu)*v_2*ds(metadata={'quadrature_degree': qd})  # Boundary condition: interact with surroundings having an effective order parameter of mus
-
-#gamma_e
-nd_eeq_pc = NC*Fermi_b((-CHI*mu**2/2 + ECHARGE*phi + CHP_IN)/(KB*T_n))
-nd_heq_pc = NV*Fermi_b((-CHI*mu**2/2 - ECHARGE*phi - CHP_IN)/(KB*T_n)) 
-# j_ex_pcpnp = -nd_e*MEA/ECHARGE*(KB*T_n*gamma_e.dx(0) + gamma_e*KB*T_n.dx(0) \
-#                           + CHI*mu*mu.dx(0) - ECHARGE*phi.dx(0))
-# j_ey_pcpnp = -nd_e*MEC/ECHARGE*(KB*T_n*gamma_e.dx(1) + gamma_e*KB*T_n.dx(1) \
-#                           + CHI*mu*mu.dx(1) - ECHARGE*phi.dx(1))
-# j_e_pcpnp = as_vector([j_ex_pcpnp, j_ey_pcpnp])  
-j_e_pcpnp = -nd_e*(ME/ECHARGE)*grad(KB*T_n*gamma_e + CHI*mu*mu/2.0 - ECHARGE*phi)
-Fe_pc = (NC*dFermi(gamma_e)*(gamma_e - gamma_en)/dt \
-      - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_3*dx(metadata={'quadrature_degree': qd}) - dot(j_e_pcpnp, grad(v_3))*dx(metadata={'quadrature_degree': qd}) \
-        -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(0,metadata={'quadrature_degree': qd}) \
-        -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(1,metadata={'quadrature_degree': qd})
-
-#gamma_h
-# j_hx_pcpnp = -nd_h*MHA/ECHARGE*(KB*T_n*gamma_h.dx(0) + gamma_h*KB*T_n.dx(0) \
-#                           + CHI*mu*mu.dx(0) + ECHARGE*phi.dx(0))
-# j_hy_pcpnp = -nd_h*MHC/ECHARGE*(KB*T_n*gamma_h.dx(1) + gamma_h*KB*T_n.dx(1) \
-#                           + CHI*mu*mu.dx(1) + ECHARGE*phi.dx(1))
-# j_h_pcpnp = as_vector([j_hx_pcpnp, j_hy_pcpnp]) 
-j_h_pcpnp = -nd_h*(MH/ECHARGE)*grad(KB*T_n*gamma_h + CHI*mu*mu/2.0 + ECHARGE*phi)
-Fh_pc = (NV*dFermi(gamma_h)*(gamma_h - gamma_hn)/dt \
-        - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_4*dx(metadata={'quadrature_degree': qd}) - dot(j_h_pcpnp, grad(v_4))*dx(metadata={'quadrature_degree': qd}) \
-        - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(0, metadata={'quadrature_degree': qd}) \
-        - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(1, metadata={'quadrature_degree': qd})
-
-#phi
-Jy_pcpnp =ECHARGE*(j_h_pcpnp[1] - j_e_pcpnp[1]) 
-Fbc_phi_Nitsche_pc = -1.0/epsilon*(phi + Resistor*Ib - delVr \
-                                + (Resistor*Capacitor)*(phi - phi_n)/dt)*v_5*ds(0, metadata={'quadrature_degree': qd}) \
-                  + (Ib - Lx * Lz * Jy_pcpnp)*v_10*ds(0, metadata={'quadrature_degree': qd})
-
-Fphi_pc = dot(grad(phi), grad(v_5))*dx(metadata={'quadrature_degree': qd}) - (ECHARGE/PERMITTIVITY)*(nd_h - nd_e)*v_5*dx(metadata={'quadrature_degree': qd}) \
-        + Fbc_phi_Nitsche_pc 
- 
- # T 
-FT_pc = FT
-
-F_pc = Feta_pc + Fmu_pc + Fe_pc + Fh_pc + Fphi_pc + FT_pc 
-
-Jac_pc = derivative(F_pc,u,du) 
+if use_GS_block_preconditioner.value:
+    #eta 
+    Feta_pc = ((eta - eta_n)/dt + 2.0 * KN*dfb_deta(T_n, eta, mu))*v_1*dx(metadata={'quadrature_degree': qd}) \
+           + (KN*KAPPAN)*dot(grad(eta), grad(v_1))*dx(metadata={'quadrature_degree': qd}) \
+           - (KN*KAPPAN/deff)*(etas - eta)*v_1*ds(metadata={'quadrature_degree': qd})   # Boundary condition: interact with surroundings having an effective order parameter of etas
+    
+    #mu 
+    nd_e_pc = NC*Fermi_b(gamma_en)    # Electron density
+    nd_h_pc = NV*Fermi_b(gamma_hn) 
+    nd_in_pc = NC*Fermi_b((-CHI*mu**2/2 + CHP_IN)/(KB*T_n)) # contain only mu,T
+    Fmu_pc = ((mu - mu_n)/dt + 2.0 * KU*(dfb_dmu(T_n, eta, mu) \
+           + CHI*mu*(nd_e_pc + nd_h_pc - 2*nd_in_pc)))*v_2*dx(metadata={'quadrature_degree': qd}) + (KU*KAPPAU)*dot(grad(mu), grad(v_2))*dx(metadata={'quadrature_degree': qd}) \
+          - (KU*KAPPAU/deff)*(mus - mu)*v_2*ds(metadata={'quadrature_degree': qd})  # Boundary condition: interact with surroundings having an effective order parameter of mus
+    
+    #gamma_e
+    nd_eeq_pc = NC*Fermi_b((-CHI*mu**2/2 + ECHARGE*phi + CHP_IN)/(KB*T_n))
+    nd_heq_pc = NV*Fermi_b((-CHI*mu**2/2 - ECHARGE*phi - CHP_IN)/(KB*T_n)) 
+    # j_ex_pcpnp = -nd_e*MEA/ECHARGE*(KB*T_n*gamma_e.dx(0) + gamma_e*KB*T_n.dx(0) \
+    #                           + CHI*mu*mu.dx(0) - ECHARGE*phi.dx(0))
+    # j_ey_pcpnp = -nd_e*MEC/ECHARGE*(KB*T_n*gamma_e.dx(1) + gamma_e*KB*T_n.dx(1) \
+    #                           + CHI*mu*mu.dx(1) - ECHARGE*phi.dx(1))
+    # j_e_pcpnp = as_vector([j_ex_pcpnp, j_ey_pcpnp])  
+    j_e_pcpnp = -nd_e*(ME/ECHARGE)*grad(KB*T_n*gamma_e + CHI*mu*mu/2.0 - ECHARGE*phi)
+    Fe_pc = (NC*dFermi(gamma_e)*(gamma_e - gamma_en)/dt \
+          - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_3*dx(metadata={'quadrature_degree': qd}) - dot(j_e_pcpnp, grad(v_3))*dx(metadata={'quadrature_degree': qd}) \
+            -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(0,metadata={'quadrature_degree': qd}) \
+            -1.0/epsilon*(gamma_e*KB*T_n +CHI*mu**2/2 - CHP_IN )*v_3*ds(1,metadata={'quadrature_degree': qd})
+    
+    #gamma_h
+    # j_hx_pcpnp = -nd_h*MHA/ECHARGE*(KB*T_n*gamma_h.dx(0) + gamma_h*KB*T_n.dx(0) \
+    #                           + CHI*mu*mu.dx(0) + ECHARGE*phi.dx(0))
+    # j_hy_pcpnp = -nd_h*MHC/ECHARGE*(KB*T_n*gamma_h.dx(1) + gamma_h*KB*T_n.dx(1) \
+    #                           + CHI*mu*mu.dx(1) + ECHARGE*phi.dx(1))
+    # j_h_pcpnp = as_vector([j_hx_pcpnp, j_hy_pcpnp]) 
+    j_h_pcpnp = -nd_h*(MH/ECHARGE)*grad(KB*T_n*gamma_h + CHI*mu*mu/2.0 + ECHARGE*phi)
+    Fh_pc = (NV*dFermi(gamma_h)*(gamma_h - gamma_hn)/dt \
+            - KEH0*mu**2*(nd_eeq_pc*nd_heq_pc - nd_e*nd_h))*v_4*dx(metadata={'quadrature_degree': qd}) - dot(j_h_pcpnp, grad(v_4))*dx(metadata={'quadrature_degree': qd}) \
+            - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(0, metadata={'quadrature_degree': qd}) \
+            - 1.0/epsilon*(gamma_h*KB*T_n +CHI*mu**2/2 + CHP_IN )*v_4*ds(1, metadata={'quadrature_degree': qd})
+    
+    #phi
+    Jy_pcpnp =ECHARGE*(j_h_pcpnp[1] - j_e_pcpnp[1]) 
+    Fbc_phi_Nitsche_pc = -1.0/epsilon*(phi + Resistor*Ib - delVr \
+                                    + (Resistor*Capacitor)*(phi - phi_n)/dt)*v_5*ds(0, metadata={'quadrature_degree': qd}) \
+                      + (Ib - Lx * Lz * Jy_pcpnp)*v_10*ds(0, metadata={'quadrature_degree': qd})
+    
+    Fphi_pc = dot(grad(phi), grad(v_5))*dx(metadata={'quadrature_degree': qd}) - (ECHARGE/PERMITTIVITY)*(nd_h - nd_e)*v_5*dx(metadata={'quadrature_degree': qd}) \
+            + Fbc_phi_Nitsche_pc 
+    
+     # T 
+    FT_pc = FT
+    
+    F_pc = Feta_pc + Fmu_pc + Fe_pc + Fh_pc + Fphi_pc + FT_pc 
+    
+    Jac_pc = derivative(F_pc,u,du) 
 
 #----------------------------------------------------------
 # Solve the problem and save the solution
@@ -859,7 +862,7 @@ def solve4dt(t):
     # problem = NonlinearVariationalProblem(F, u, bcs, Jac)
     # solver = NonlinearVariationalSolver(problem)
 
-    if use_GS_block_preconditioner: 
+    if use_GS_block_preconditioner.value: 
         num, converged = solver.solve(problem, u.vector())    
     else:
         num, converged = solver.solve()   # Return whether the solver converges
@@ -1055,7 +1058,7 @@ else:
 
 # Write log file header. Tfail is the accumulative number of time refinement, Nfail is the accumulative number of Newton solver nonconvergence, and Terr is the final L2 error of time stepping.
 if rank == 0:
-    logfile.write(f'          #Step            Time       Time step           Tfail           Nfail      Other fail    Av. EOP norm       Av. T (K)           V (V)         R (Ohm)\n')
+    logfile.write(f'          #Step            Time       Time step           Tfail           Nfail      Other fail    Av. EOP norm    Av. SOP norm       Av. T (K)           V (V)         R (Ohm)\n')
     logfile.flush()
 
 while t < tf.value + 1e-9*tf.value:
@@ -1132,13 +1135,15 @@ while t < tf.value + 1e-9*tf.value:
             if n_out > len_t_out - 1:
                 break
             
-    mu_norm_av = math.sqrt(assemble(mu**2*dx)/(Lx.value*Ly.value))
+    mu_norm_av = math.sqrt(assemble(mu*mu*dx)/vol)
+    eta_norm_av = math.sqrt(assemble(eta*eta*dx)/vol)
     V_VO2 = assemble(phi*ds(0)) / Lx.value * VUNIT  # Calculate voltage drop across VO2
-    Tav = assemble(T*dx) / (Lx.value*Ly.value) * TEMPUNIT  # Calculate average temperature across VO2
-    R_VO2 = V_VO2 / (Lz.value*assemble(Jy*ds(0)) * CUNIT/TUNIT)  # Calculate VO2 resistance
+    Tav = assemble(T*dx) / vol * TEMPUNIT  # Calculate average temperature across VO2
+    # R_VO2 = V_VO2 / (Lz.value*assemble(Jy*ds(0)) * CUNIT/TUNIT)  # Calculate VO2 resistance
+    R_VO2 = V_VO2 / (assemble(Ib * ds(0)) / (vol / Ly.value) * CUNIT / TUNIT)
     if rank == 0:
         print(f'User message ===> Completed refinement: dt = {dt.value:15.6e}, t = {t:15.6e} --> {t+dt.value:15.6e}', flush=True)
-        logfile.write(f'{n_step:15d} {t+dt.value:15.6e} {dt.value:15.6e} {Tfail:15d} {Nfail:15d} {otherfail:15d} {mu_norm_av:15.6f} {Tav:15.6e} {V_VO2:15.6e} {R_VO2:15.6e}\n') 
+        logfile.write(f'{n_step:15d} {t+dt.value:15.6e} {dt.value:15.6e} {Tfail:15d} {Nfail:15d} {otherfail:15d} {mu_norm_av:15.6f} {eta_norm_av:15.6f} {Tav:15.6e} {V_VO2:15.6e} {R_VO2:15.6e}\n') 
         logfile.flush()
 
     dudt_n = project((u - u_n)/dt, V)

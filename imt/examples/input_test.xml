@@ -17,6 +17,7 @@
  </time>
  <initialization>
   <temperature unit='K'>300.0</temperature>  <!-- Changed from 240.0 to 330.0 with an increment of 10.0 -->
+  <voltage unit='V'>0.0</voltage>
   <SOP>0.1</SOP>
   <EOP>-0.1</EOP>
   <Tcvariance method='nucleus1'>
