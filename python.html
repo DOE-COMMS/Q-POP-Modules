@@ -442,12 +442,17 @@ document.write(`
 <h1>Python Program for IMT<a class="headerlink" href="#python-program-for-imt" title="Permalink to this heading">#</a></h1>
 <section id="environment-setup">
 <h2>Environment setup<a class="headerlink" href="#environment-setup" title="Permalink to this heading">#</a></h2>
-<p>The setup of FEniCS with Python is easier than for C++, you can follow the official installation guide <a class="reference external" href="https://fenicsproject.org/download/archive/">here</a>.</p>
+<p>The setup of FEniCS with Python is easier than for C++, you can follow the official installation guide <a class="reference external" href="https://fenicsproject.org/download/archive/">here</a>. For instance, to install on Perlmutter using conda, use</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>fenics-legacy<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>fenics<span class="w"> </span>mpich
+conda<span class="w"> </span>activate<span class="w"> </span>fenics-legacy
+</pre></div>
+</div>
 </section>
 <section id="run-the-code">
 <h2>Run the code<a class="headerlink" href="#run-the-code" title="Permalink to this heading">#</a></h2>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>xxx.py
 mpirun<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>python<span class="w"> </span>xxx.py<span class="w">  </span><span class="c1"># running the code on 4 cores in parallel</span>
+srun<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>python3<span class="w"> </span>qpop-imt.py<span class="w"> </span><span class="c1"># Running on Perlmutter</span>
 </pre></div>
 </div>
 </section>
@@ -584,7 +589,7 @@ By Xiaoxing Cheng
 
   <p class="copyright">
     
-      © Copyright 2024, DOE COMMS.
+      © Copyright 2025, DOE COMMS.
       <br/>
     
   </p>
