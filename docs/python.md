@@ -1,12 +1,17 @@
 # Python Program for IMT
 
 ## Environment setup
-The setup of FEniCS with Python is easier than for C++, you can follow the official installation guide [here](https://fenicsproject.org/download/archive/).
+The setup of FEniCS with Python is easier than for C++, you can follow the official installation guide [here](https://fenicsproject.org/download/archive/). For instance, to install on Perlmutter using conda, use
+```sh
+conda create -n fenics-legacy -c conda-forge fenics mpich
+conda activate fenics-legacy
+```
 
 ## Run the code 
 ```sh
 python xxx.py
 mpirun -n 4 python xxx.py  # running the code on 4 cores in parallel
+srun -n 2 python3 qpop-imt.py # Running on Perlmutter
 ```
 
 ## Brief explanation of the code
