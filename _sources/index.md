@@ -13,6 +13,7 @@ This development of the software was supported as part of the Computational Mate
 ```{toctree}
 prepare.md
 run.md
+formulation.md
 examples.md
 visualization.md
 python.md
