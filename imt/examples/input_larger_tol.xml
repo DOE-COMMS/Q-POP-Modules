@@ -25,10 +25,10 @@
   </Tcvariance>
  </initialization>
  <solverparameters>
-  <Newtonabsolutetolerance>1e-6</Newtonabsolutetolerance>
-  <Newtonrelativetolerance>1e-4</Newtonrelativetolerance>
+  <Newtonabsolutetolerance>1e-5</Newtonabsolutetolerance>
+  <Newtonrelativetolerance>1e-3</Newtonrelativetolerance>
   <Newtonmaxiteration>15</Newtonmaxiteration>
-  <timesteptolerance>1e-3</timesteptolerance>
+  <timesteptolerance>1e-2</timesteptolerance>
   <directsolver>mumps</directsolver>
   <useGSblockpreconditioner>0</useGSblockpreconditioner>
   <loglevel>WARNING</loglevel>
