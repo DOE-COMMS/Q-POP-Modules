@@ -1121,7 +1121,7 @@ while t < tf.value + 1e-9*tf.value:
     # Time step refinement is done, now save solution, update solution, and output
     n_step += 1
     if savemethod.value == 'auto':
-        if n_step % saveperiod.value == 1:
+        if (n_step - 1) % saveperiod.value == 0:
             save_sol(u, t+dt.value)
     # Output at specified times by linear interpolation
     elif savemethod.value == 'fix':
