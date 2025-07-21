@@ -11,9 +11,9 @@
   <Lz unit='nm'>20.0</Lz>
  </external>
  <time>
-  <endtime unit='ns'>2e3</endtime>
+  <endtime unit='ns'>500.0</endtime>
   <savemethod>auto</savemethod>
-  <saveperiod>20</saveperiod>
+  <saveperiod>5</saveperiod>
  </time>
  <initialization>
   <temperature unit='K'>300.0</temperature>
